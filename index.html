@@ -54,7 +54,7 @@
         <div class="progress-bar">
           <div class="progress-fill"></div>
         </div>
-        <p class="progress-percent">0%</p>
+        <p class="progress-percent">33%</p>
       </div>
       <div class="team-members">
         <div class="team-list">
@@ -64,17 +64,17 @@
             <li class="team-member-item" data-team="front-end">Front-end</li>
             <li class="team-member-item" data-team="back-end">Back-end</li>
             <li class="team-member-item" data-team="ai">AI</li>
+            <li class="team-member-item" data-team="planner">기획</li>
           </ul>
         </div>
         <div class="member-details">
-          <div class="profile-set" id="designer-profile">
+          <div class="profile-set" id="user-profile">
             <img src="gu.png" alt="Member Profile" class="profile-pic">
             <div class="profile-info">
-              <p class="name">신유진</p>
-              <p class="position">단국대학교 / Designer</p>
+              <p class="name" id="profile-name"></p>
+              <p class="position" id="profile-position"></p>
             </div>
           </div>
-          <!-- 다른 팀의 프로필을 추가하려면 여기에 추가 -->
         </div>
       </div>
     </div>
@@ -121,18 +121,25 @@
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const teamMembers = document.querySelectorAll(".team-member-item");
-    const designerProfile = document.getElementById("designer-profile");
+    const userProfile = document.getElementById("user-profile");
 
-    // 기본 설정: 디자이너 프로필 보이게 설정
-    designerProfile.style.display = "flex";
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+    if (userInfo) {
+      document.getElementById("profile-name").textContent = userInfo.name;
+      document.getElementById("profile-position").textContent = `${userInfo.affiliation} / ${userInfo.position}`;
+    }
+
+    // 기본 설정: 로그인한 유저의 프로필 보이게 설정
+    userProfile.style.display = "flex";
 
     teamMembers.forEach(function (member) {
       member.addEventListener("click", function () {
         const team = this.getAttribute("data-team");
-        if (team === "designer") {
-          designerProfile.style.display = "flex";
+        if (team === userInfo.position.toLowerCase()) {
+          userProfile.style.display = "flex";
         } else {
-          designerProfile.style.display = "none";
+          userProfile.style.display = "none";
         }
       });
     });
@@ -208,14 +215,10 @@
         if (item.type === "task") {
           const checkbox = document.createElement("input");
           checkbox.type = "checkbox";
+          checkbox.classList.add("task-checkbox");
           if (item.completed) {
             checkbox.checked = true;
           }
-          checkbox.addEventListener("change", function () {
-            item.completed = checkbox.checked;
-            updateProgress();
-            localStorage.setItem("todoList", JSON.stringify(savedTodoList));
-          });
           content.appendChild(checkbox);
           const textNode = document.createTextNode(` ${item.text}`);
           content.appendChild(textNode);
@@ -243,17 +246,8 @@
       });
     }
 
-    function updateProgress() {
-      const totalTasks = savedTodoList.filter(item => item.type === "task").length;
-      const completedTasks = savedTodoList.filter(item => item.type === "task" && item.completed).length;
-      const progressPercent = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
-      document.querySelector(".progress-percent").textContent = `${progressPercent}%`;
-      document.querySelector(".progress-fill").style.width = `${progressPercent}%`;
-    }
-
     renderTodoList();
     renderNoticeList();
-    updateProgress();
 
     addTodoButton.addEventListener("click", function () {
       const selectedOption = todoDropdown.value;
@@ -267,20 +261,13 @@
       if (selectedOption === "task") {
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
-        checkbox.addEventListener("change", function () {
-          const todoIndex = savedTodoList.findIndex(item => item.text === todoText && item.type === "task");
-          if (todoIndex > -1) {
-            savedTodoList[todoIndex].completed = checkbox.checked;
-            updateProgress();
-            localStorage.setItem("todoList", JSON.stringify(savedTodoList));
-          }
-        });
+        checkbox.classList.add("task-checkbox");
         content.appendChild(checkbox);
         const textNode = document.createTextNode(` ${todoText}`);
         content.appendChild(textNode);
 
         const notice = document.createElement("p");
-        notice.textContent = `신유진 님이 ToDo를 생성하였습니다.`;
+        notice.textContent = `${userInfo.name} 님이 ToDo를 생성하였습니다.`;
         noticeList.appendChild(notice);
 
         savedNoticeList.push(notice.textContent);
@@ -290,7 +277,7 @@
         content.textContent = todoText;
 
         const notice = document.createElement("p");
-        notice.textContent = `신유진 님이 Goal을 생성하였습니다.`;
+        notice.textContent = `${userInfo.name} 님이 Goal을 생성하였습니다.`;
         noticeList.appendChild(notice);
 
         savedNoticeList.push(notice.textContent);
@@ -305,9 +292,9 @@
 
       todoList.appendChild(li);
 
+      // LocalStorage에 저장
       localStorage.setItem("todoList", JSON.stringify(savedTodoList));
       localStorage.setItem("noticeList", JSON.stringify(savedNoticeList));
-      updateProgress();
 
       todoInput.value = ""; // 입력 필드 초기화
     });
@@ -331,6 +318,33 @@
         localStorage.setItem("todoList", JSON.stringify(savedTodoList));
       }
     });
+
+    todoList.addEventListener("change", function () {
+      const checkboxes = todoList.querySelectorAll(".task-checkbox");
+      const totalTasks = checkboxes.length;
+      const completedTasks = Array.from(checkboxes).filter(checkbox => checkbox.checked).length;
+      const progress = totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100;
+
+      document.querySelector(".progress-fill").style.width = `${progress}%`;
+      document.querySelector(".progress-percent").textContent = `${Math.round(progress)}%`;
+
+      savedTodoList.forEach((item, index) => {
+        if (item.type === "task") {
+          item.completed = checkboxes[index].checked;
+        }
+      });
+
+      localStorage.setItem("todoList", JSON.stringify(savedTodoList));
+    });
+
+    // 초기 로드 시 진행률 업데이트
+    const checkboxes = todoList.querySelectorAll(".task-checkbox");
+    const totalTasks = checkboxes.length;
+    const completedTasks = Array.from(checkboxes).filter(checkbox => checkbox.checked).length;
+    const progress = totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100;
+
+    document.querySelector(".progress-fill").style.width = `${progress}%`;
+    document.querySelector(".progress-percent").textContent = `${Math.round(progress)}%`;
   });
 </script>
 </body>

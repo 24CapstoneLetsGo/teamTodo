@@ -29,23 +29,23 @@
             <div class="profile-header">
                 <img src="gu.png" alt="Profile Picture" class="profile-pic">
                 <div class="profile-info">
-                    <span class="name">신유진</span>
-                    <span class="position">단국대학교 / Designer</span>
+                    <span class="name"></span>
+                    <span class="position"></span>
                 </div>
             </div>
             <div class="form-block">
                 <label for="username">Username</label>
-                <input type="text" id="username" name="username" value="@nyamdoong">
+                <input type="text" id="username" name="username" disabled>
             </div>
             <div class="form-block">
                 <label for="email">E-mail</label>
-                <input type="email" id="email" name="email" value="32202398@dankook.ac.kr">
+                <input type="email" id="email" name="email" disabled>
             </div>
             <div class="form-block">
                 <div class="label-container">
                     <label for="affiliation">소속</label>
                 </div>
-                <input type="text" id="affiliation" name="affiliation" value="단국대학교">
+                <input type="text" id="affiliation" name="affiliation" disabled>
             </div>
             <div class="form-block">
                 <div class="label-container">
@@ -53,7 +53,7 @@
                     <small class="note">직무 변경 시 1개월 동안 수정이 불가합니다. 관리자에게 문의하세요.</small>
                 </div>
                 <select id="job" name="job">
-                    <option value="designer" selected>Designer</option>
+                    <option value="designer">Designer</option>
                     <option value="front-end">Front-end</option>
                     <option value="back-end">Back-end</option>
                     <option value="ai">AI</option>
@@ -67,5 +67,29 @@
             <button type="submit">Save changes</button>
         </form>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+            if (userInfo) {
+                document.getElementById("username").value = userInfo.name;
+                document.getElementById("email").value = userInfo.email;
+                document.getElementById("affiliation").value = userInfo.affiliation;
+                document.getElementById("job").value = userInfo.position;
+                document.querySelector(".profile-info .name").textContent = userInfo.name;
+                document.querySelector(".profile-info .position").textContent = `${userInfo.affiliation} / ${getPositionName(userInfo.position)}`;
+            }
+
+            function getPositionName(position) {
+                const positions = {
+                    "designer": "Designer",
+                    "front-end": "Front-end",
+                    "back-end": "Back-end",
+                    "ai": "AI",
+                    "planner": "기획"
+                };
+                return positions[position] || position;
+            }
+        });
+    </script>
 </body>
 </html>

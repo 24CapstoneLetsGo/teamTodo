@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="edit_profile.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <span class="team">Team</span><br>
+            <span class="todo">ToDo</span>
+        </div>
+        <nav>
+            <ul>
+                <li><button onclick="location.href='index.html'"><img src="blackhome.png" alt="Home"></button></li>
+                <li><button onclick="location.href='edit_profile.html'"><img src="yellowprofile.png" alt="Profile"></button></li>
+                <li><button onclick="location.href='login.html'"><img src="blacklogout.png" alt="Logout"></button></li>
+            </ul>
+        </nav>
+        <div class="help">
+            <button onclick="location.href='help.html'"><img src="help.png" alt="Help"></button>
+        </div>
+    </div>
+    <div class="main-content">
+        <h1>Edit profile</h1>
+        <form class="profile-form">
+            <div class="profile-header">
+                <img src="gu.png" alt="Profile Picture" class="profile-pic">
+                <div class="profile-info">
+                    <span class="name">신유진</span>
+                    <span class="position">단국대학교 / Designer</span>
+                </div>
+            </div>
+            <div class="form-block">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" value="@nyamdoong">
+            </div>
+            <div class="form-block">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" value="32202398@dankook.ac.kr">
+            </div>
+            <div class="form-block">
+                <div class="label-container">
+                    <label for="affiliation">소속</label>
+                </div>
+                <input type="text" id="affiliation" name="affiliation" value="단국대학교">
+            </div>
+            <div class="form-block">
+                <div class="label-container">
+                    <label for="job">직무</label>
+                    <small class="note">직무 변경 시 1개월 동안 수정이 불가합니다. 관리자에게 문의하세요.</small>
+                </div>
+                <select id="job" name="job">
+                    <option value="designer" selected>Designer</option>
+                    <option value="front-end">Front-end</option>
+                    <option value="back-end">Back-end</option>
+                    <option value="ai">AI</option>
+                    <option value="planner">기획</option>
+                </select>
+            </div>
+            <div class="form-block">
+                <label for="description">설명</label>
+                <textarea id="description" name="description">4학년.... 외로울지도......</textarea>
+            </div>
+            <button type="submit">Save changes</button>
+        </form>
+    </div>
+</body>
+</html>

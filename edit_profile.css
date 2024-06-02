@@ -1,0 +1,180 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #FFFDD0; /* 배경색을 #FFFDD0으로 변경 */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh; /* 전체 화면 높이를 맞추기 위해 설정 */
+}
+
+.sidebar {
+    background-color: #FFFDD0; /* 전체 배경색과 동일한 색으로 변경 */
+    width: 195px; /* 툴바 너비를 200px로 설정 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+}
+
+.sidebar .logo {
+    font-size: 36px; /* 글꼴 크기를 키움 */
+    color: #4DCADB; /* 로고 색상 */
+    font-weight: bold; /* 볼드체 */
+    margin-bottom: 20px;
+    line-height: 0.5; /* 줄 간격을 좁혀서 두 줄로 만듦 */
+    width: 100%; /* 전체 너비 사용 */
+}
+
+.sidebar .team {
+    text-align: left;
+    display: block;
+    margin-left: 20px; /* 왼쪽 여백 추가 */
+}
+
+.sidebar .todo {
+    text-align: right;
+    display: block;
+    margin-right: 20px; /* 오른쪽 여백 추가 */
+}
+
+.sidebar nav ul {
+    list-style-type: none;
+    padding: 0;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.sidebar nav ul li {
+    margin: 10px 0;
+}
+
+.sidebar nav ul li button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.sidebar nav ul li button img {
+    width: 50px;
+    height: 50px;
+}
+
+.help {
+    margin-bottom: 20px;
+}
+
+.help button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.help button img {
+    width: 50px;
+    height: 50px;
+}
+
+.main-content {
+    flex-grow: 1;
+    background-color: #fff;
+    padding: 20px; /* 상단 패딩을 줄임 */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 10px; /* 상단 여백을 줄임 */
+    border: 1px solid #ccc; /* 테두리 추가 */
+    position: relative;
+}
+
+h1 {
+    font-size: 24px;
+    color: #5c3d2e;
+    margin-bottom: 20px; /* 하단 여백 추가 */
+    text-align: left; /* 왼쪽 정렬 */
+    position: absolute;
+    top: 20px;
+    left: 30px;
+}
+
+.profile-form {
+    max-width: 600px; /* 폼의 최대 너비를 설정 */
+    margin: 0 auto;
+    padding-top: 60px; /* h1의 절대 위치에 대한 여백 추가 */
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.profile-pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 20px;
+}
+
+.profile-info .name {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.profile-info .position {
+    font-size: 14px;
+    color: #777;
+}
+
+.form-block {
+    margin-bottom: 20px;
+}
+
+.label-container {
+    display: flex;
+    align-items: center;
+}
+
+label {
+    font-weight: bold;
+    margin-right: 10px; /* 오른쪽 여백 추가 */
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* 박스 크기 조절 */
+}
+
+textarea {
+    height: 100px;
+}
+
+button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #5c3d2e;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #4a3124;
+}
+
+.note {
+    font-size: 12px; /* 글씨 크기를 작게 */
+    color: #777;
+}

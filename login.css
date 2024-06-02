@@ -1,0 +1,99 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #FFFDD0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.login-container h1 {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.team-todo {
+    color: #4DCADB;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    width: 100%;
+    position: relative;
+}
+
+.input-group label {
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.input-group input {
+    width: calc(100% - 40px);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.password-container {
+    position: relative;
+    width: 100%;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 35px; /* 눈 아이콘 위치를 왼쪽으로 조금 이동 */
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.login-button {
+    background-color: #4DCADB;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.login-button:hover {
+    background-color: #399bb5;
+}
+
+.signup-prompt {
+    margin-top: 15px;
+}
+
+.signup-prompt a {
+    color: #4DCADB;
+    text-decoration: none;
+}
+
+.signup-prompt a:hover {
+    text-decoration: underline;
+}
+
+/* 추가된 CSS */
+.input-group input.error {
+    border-color: #DC2626;
+    color: #DC2626;
+}

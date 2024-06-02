@@ -14,31 +14,35 @@
                 <label for="email">Address e-mail</label>
                 <input type="email" id="email" name="email" value="32202398@dankook.ac.kr">
             </div>
-            <div class="input-group">
-                <label for="name">이름</label>
-                <input type="text" id="name" name="name" value="신유진">
-            </div>
-            <div class="input-group">
-                <label>전화번호 입력</label>
-                <div class="phone-input">
-                    <input type="text" id="phone1" name="phone1" value="010" maxlength="3">
-                    <input type="text" id="phone2" name="phone2" value="1234" maxlength="4">
-                    <input type="text" id="phone3" name="phone3" value="5678" maxlength="4">
+            <div class="row">
+                <div class="input-group half-width">
+                    <label for="name">이름</label>
+                    <input type="text" id="name" name="name" value="신유진">
+                </div>
+                <div class="input-group half-width">
+                    <label>전화번호 입력</label>
+                    <div class="phone-input">
+                        <input type="text" id="phone1" name="phone1" value="010" maxlength="3">
+                        <input type="text" id="phone2" name="phone2" value="1234" maxlength="4">
+                        <input type="text" id="phone3" name="phone3" value="5678" maxlength="4">
+                    </div>
                 </div>
             </div>
-            <div class="input-group">
-                <label for="affiliation">소속</label>
-                <input type="text" id="affiliation" name="affiliation" value="단국대학교">
-            </div>
-            <div class="input-group">
-                <label for="position">직무</label>
-                <select id="position" name="position">
-                    <option value="designer" selected>Designer</option>
-                    <option value="front-end">Front-end</option>
-                    <option value="back-end">Back-end</option>
-                    <option value="ai">AI</option>
-                    <option value="planner">기획</option>
-                </select>
+            <div class="row">
+                <div class="input-group half-width">
+                    <label for="affiliation">소속</label>
+                    <input type="text" id="affiliation" name="affiliation" value="단국대학교">
+                </div>
+                <div class="input-group half-width">
+                    <label for="position">직무</label>
+                    <select id="position" name="position">
+                        <option value="designer" selected>Designer</option>
+                        <option value="front-end">Front-end</option>
+                        <option value="back-end">Back-end</option>
+                        <option value="ai">AI</option>
+                        <option value="planner">기획</option>
+                    </select>
+                </div>
             </div>
             <div class="input-group">
                 <label for="password">비밀번호 입력</label>
@@ -54,7 +58,7 @@
                     <span class="password-toggle">&#128065;</span>
                 </div>
             </div>
-            <div class="input-group">
+            <div class="agree-group">
                 <input type="checkbox" id="agree" name="agree">
                 <label for="agree" class="agree-label">개인정보 수집에 동의합니다.</label>
             </div>
@@ -75,6 +79,17 @@
                     agreeLabel.style.color = "";
                     window.location.href = "login.html";
                 }
+            });
+
+            document.querySelectorAll('.password-toggle').forEach(toggle => {
+                toggle.addEventListener('click', function () {
+                    const input = this.previousElementSibling;
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                    } else {
+                        input.type = 'password';
+                    }
+                });
             });
         });
     </script>

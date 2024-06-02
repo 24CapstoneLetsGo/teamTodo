@@ -83,6 +83,7 @@ h1 {
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
+    margin-top: 20px; /* 여백 추가 */
 }
 
 .signup-button:hover {
@@ -99,12 +100,27 @@ h1 {
     text-decoration: none;
 }
 
-.input-group label[for="agree"] {
-    display: inline;
-    margin-left: 10px;
+.row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
 }
 
-.input-group input[type="checkbox"] {
-    display: inline;
-    width: auto;
+.half-width {
+    width: 48%;
+}
+
+.agree-group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* 왼쪽 정렬 */
+    width: 100%;
+}
+
+.agree-group input[type="checkbox"] {
+    margin-right: 10px; /* 체크박스와 라벨 사이의 간격 */
+}
+
+.agree-label {
+    text-align: left; /* 왼쪽 정렬 */
 }

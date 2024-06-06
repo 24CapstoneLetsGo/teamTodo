@@ -59,6 +59,7 @@ h1 {
 
 .phone-input {
     display: flex;
+    justify-content: space-between;
     gap: 10px;
 }
 

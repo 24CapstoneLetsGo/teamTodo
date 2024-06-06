@@ -5,23 +5,81 @@ body {
     padding: 0;
     display: flex;
     height: 100vh;
-    justify-content: center;
-    align-items: center;
 }
 
-.signup-container {
+.sidebar {
+    background-color: #FFFDD0; /* 전체 배경색과 동일한 색으로 변경 */
+    width: 195px; /* 메인 화면의 툴바 너비와 동일하게 설정 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+}
+
+.sidebar .logo {
+    font-size: 36px; /* 글꼴 크기를 키움 */
+    color: #4DCADB; /* 로고 색상 */
+    font-weight: bold; /* 볼드체 */
+    margin-bottom: 20px;
+    text-align: center; /* 중앙 정렬 */
+}
+
+.sidebar nav ul {
+    list-style-type: none;
+    padding: 0;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; /* 아이콘들을 중앙에 위치시키기 위해 설정 */
+}
+
+.sidebar nav ul li {
+    margin: 20px 0;
+}
+
+.sidebar nav ul li button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.sidebar nav ul li button img {
+    width: 50px;
+    height: 50px;
+}
+
+.help {
+    margin-bottom: 20px;
+}
+
+.help button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.help button img {
+    width: 50px;
+    height: 50px;
+}
+
+.main-content {
+    flex-grow: 1;
     background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    width: 100%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 h1 {
     font-size: 24px;
     color: #5c3d2e;
-    text-align: center;
 }
 
 .team-todo {
@@ -32,6 +90,8 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
+    max-width: 500px;
+    width: 100%;
 }
 
 .input-group {
@@ -54,19 +114,10 @@ h1 {
     box-sizing: border-box;
 }
 
-.phone-input {
-    display: flex;
-    gap: 10px;
-}
-
-.phone-input input {
-    width: calc(33.33% - 6.67px);
-    text-align: center;
-}
-
 .password-container {
     display: flex;
     align-items: center;
+    width: 100%;
 }
 
 .password-toggle {
@@ -98,16 +149,6 @@ h1 {
 .login-prompt a {
     color: #4DCADB;
     text-decoration: none;
-}
-
-.row {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.half-width {
-    width: 48%;
 }
 
 .agree-group {

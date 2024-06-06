@@ -3,28 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Profile</title>
+    <title>회원가입</title>
     <link rel="stylesheet" href="./css/signup.css">
 </head>
 <body>
-    <div class="sidebar">
-        <div class="logo">
-            <span class="team">Team</span><br>
-            <span class="todo">ToDo</span>
-        </div>
-        <nav>
-            <ul>
-                <li><button onclick="location.href='index.html'"><img src="./images/blackhome.png" alt="Home"></button></li>
-                <li><button onclick="location.href='edit_profile.html'"><img src="./images/yellowprofile.png" alt="Profile"></button></li>
-                <li><button onclick="location.href='login.html'"><img src="./images/blacklogout.png" alt="Logout"></button></li>
-            </ul>
-        </nav>
-        <div class="help">
-            <button onclick="location.href='help.html'"><img src="./images/help.png" alt="Help"></button>
-        </div>
-    </div>
-    <div class="main-content">
-        <h1>Edit Profile</h1>
+    <div class="signup-container">
+        <h1>회원가입</h1>
         <form class="signup-form" action="signup.php" method="POST">
             <div class="input-group">
                 <label for="name">이름</label>
@@ -36,9 +20,11 @@
             </div>
             <div class="input-group">
                 <label for="phone1">전화번호</label>
-                <input type="text" id="phone1" name="phone1" required>
-                <input type="text" id="phone2" name="phone2" required>
-                <input type="text" id="phone3" name="phone3" required>
+                <div class="phone-input">
+                    <input type="text" id="phone1" name="phone1" required>
+                    <input type="text" id="phone2" name="phone2" required>
+                    <input type="text" id="phone3" name="phone3" required>
+                </div>
             </div>
             <div class="input-group">
                 <label for="affiliation">소속</label>
@@ -89,4 +75,3 @@
     </script>
 </body>
 </html>
-

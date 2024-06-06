@@ -25,26 +25,28 @@
     </div>
     <div class="main-content">
         <h1>Edit Profile</h1>
-        <form class="signup-form">
+        <form class="signup-form" action="signup.php" method="POST">
             <div class="input-group">
-                <label for="username">이름</label>
-                <input type="text" id="username" name="username" required>
+                <label for="name">이름</label>
+                <input type="text" id="name" name="name" required>
             </div>
             <div class="input-group">
-                <label for="email">이메일</label>
-                <input type="email" id="email" name="email" required>
+                <label for="username">이메일</label>
+                <input type="email" id="username" name="username" required>
             </div>
             <div class="input-group">
-                <label for="phone_num">전화번호</label>
-                <input type="text" id="phone_num" name="phone_num" required>
+                <label for="phone1">전화번호</label>
+                <input type="text" id="phone1" name="phone1" required>
+                <input type="text" id="phone2" name="phone2" required>
+                <input type="text" id="phone3" name="phone3" required>
             </div>
             <div class="input-group">
-                <label for="group">소속</label>
-                <input type="text" id="group" name="group" required>
+                <label for="affiliation">소속</label>
+                <input type="text" id="affiliation" name="affiliation" required>
             </div>
             <div class="input-group">
-                <label for="team">직무</label>
-                <select id="team" name="team" required>
+                <label for="position">직무</label>
+                <select id="position" name="position" required>
                     <option value="designer">디자이너</option>
                     <option value="front-end">프론트엔드</option>
                     <option value="back-end">백엔드</option>
@@ -53,16 +55,16 @@
                 </select>
             </div>
             <div class="input-group">
-                <label for="passwd">비밀번호</label>
+                <label for="password">비밀번호</label>
                 <div class="password-container">
-                    <input type="password" id="passwd" name="passwd" required>
+                    <input type="password" id="password" name="password" required>
                     <span class="password-toggle" onclick="togglePasswordVisibility()">👁️</span>
                 </div>
             </div>
             <div class="input-group">
-                <label for="confirm_passwd">비밀번호 확인</label>
+                <label for="confirm-password">비밀번호 확인</label>
                 <div class="password-container">
-                    <input type="password" id="confirm_passwd" name="confirm_passwd" required>
+                    <input type="password" id="confirm-password" name="confirm-password" required>
                     <span class="password-toggle" onclick="togglePasswordVisibility()">👁️</span>
                 </div>
             </div>
@@ -87,3 +89,4 @@
     </script>
 </body>
 </html>
+

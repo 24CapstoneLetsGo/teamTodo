@@ -24,13 +24,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    // 사용자 정보 삽입
-    $stmt = $conn->prepare("INSERT INTO users (username, email, phone_num, group_name, team_name, passwd) VALUES (?, ?, ?, ?, ?, ?)");
+    // team_id 가져오기
+    $stmt = $conn->prepare("SELECT team_id FROM teams WHERE team_name = ?");
     if ($stmt === false) {
         die("Prepare failed: " . $conn->error);
     }
 
-    $stmt->bind_param("ssssss", $username, $email, $phone_num, $group_name, $team_name, $passwd);
+    $stmt->bind_param("s", $team_name);
+    $stmt->execute();
+    $stmt->bind_result($team_id);
+    $stmt->fetch();
+    $stmt->close();
+
+    if (!$team_id) {
+        echo "Team not found.";
+        exit();
+    }
+
+    // 사용자 정보 삽입
+    $stmt = $conn->prepare("INSERT INTO users (username, email, phone_num, group_name, team_name, passwd, team_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    if ($stmt === false) {
+        die("Prepare failed: " . $conn->error);
+    }
+
+    $stmt->bind_param("ssssssi", $username, $email, $phone_num, $group_name, $team_name, $passwd, $team_id);
     if ($stmt->execute()) {
         header("Location: login.html");
         exit();

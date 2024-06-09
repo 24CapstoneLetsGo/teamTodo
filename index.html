@@ -115,7 +115,22 @@
     const teamMembers = document.querySelectorAll(".team-member-item");
     const memberDetails = document.getElementById("member-details");
 
-    // 사용자 정보 가져오기
+    // 로그인한 사용자 정보 가져오기
+    function fetchLoggedInUser() {
+        fetch('get_user_info.php')
+            .then(response => response.json())
+            .then(userInfo => {
+                if (userInfo.error) {
+                    alert(userInfo.error);
+                    return;
+                }
+                displayUserInfo(userInfo);
+                selectTeam(userInfo.team_name);
+            })
+            .catch(error => console.error('Error fetching logged in user info:', error));
+    }
+
+    // 팀 멤버 정보 가져오기
     function fetchUsersByTeam(team) {
         fetch(`get_team_users.php?team=${team}`)
             .then(response => response.json())
@@ -157,6 +172,47 @@
 
             memberDetails.appendChild(userProfile);
         });
+    }
+
+    // 로그인한 사용자 정보 표시
+    function displayUserInfo(userInfo) {
+        memberDetails.innerHTML = ""; // 기존 내용을 지우고 새로 추가
+        const userProfile = document.createElement("div");
+        userProfile.classList.add("profile-set");
+        userProfile.style.display = "flex";
+        userProfile.style.marginBottom = "10px"; // 각 프로필 사이에 여백 추가
+
+        const profilePic = document.createElement("img");
+        profilePic.src = "./images/gu.png"; // 프로필 사진 경로를 실제 사진 경로로 변경
+        profilePic.alt = "Member Profile";
+        profilePic.classList.add("profile-pic");
+
+        const profileInfo = document.createElement("div");
+        profileInfo.classList.add("profile-info");
+
+        const profileName = document.createElement("p");
+        profileName.classList.add("name");
+        profileName.textContent = userInfo.username;
+
+        const profileTeam = document.createElement("p");
+        profileTeam.classList.add("position");
+        profileTeam.textContent = `${userInfo.group_name} / ${userInfo.team_name}`;
+
+        profileInfo.appendChild(profileName);
+        profileInfo.appendChild(profileTeam);
+        userProfile.appendChild(profilePic);
+        userProfile.appendChild(profileInfo);
+
+        memberDetails.appendChild(userProfile);
+    }
+
+    // 팀 선택 표시
+    function selectTeam(team) {
+        const selectedTeam = document.querySelector(`.team-member-item[data-team='${team}']`);
+        if (selectedTeam) {
+            selectedTeam.classList.add("selected");
+            fetchUsersByTeam(team);
+        }
     }
 
     teamMembers.forEach(function (member) {
@@ -216,6 +272,9 @@
     });
 
     generateCalendar(currentMonth, currentYear);
+
+    // 로그인한 사용자 정보 가져오기 및 표시
+    fetchLoggedInUser();
   });
 </script>
 </body>

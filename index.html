@@ -114,10 +114,6 @@
   document.addEventListener("DOMContentLoaded", function () {
     const teamMembers = document.querySelectorAll(".team-member-item");
     const memberDetails = document.getElementById("member-details");
-    const todoDropdown = document.querySelector(".todo-dropdown");
-    const todoInput = document.getElementById("todo-input");
-    const addTodoButton = document.querySelector(".add-todo-button");
-    const todoList = document.getElementById("todo-list");
 
     // 로그인한 사용자 정보 가져오기
     function fetchLoggedInUser() {
@@ -279,58 +275,6 @@
 
     // 로그인한 사용자 정보 가져오기 및 표시
     fetchLoggedInUser();
-
-    // 투두리스트 항목 추가
-    addTodoButton.addEventListener("click", function () {
-        const todoType = todoDropdown.value;
-        const todoContent = todoInput.value.trim();
-        if (todoContent === "") {
-            alert("내용을 입력하세요.");
-            return;
-        }
-
-        // 서버에 투두리스트 항목 추가 요청
-        fetch('add_todo.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ type: todoType, content: todoContent })
-        })
-        .then(response => response.json())
-        .then(result => {
-            if (result.success) {
-                addTodoToList(todoType, todoContent);
-                todoInput.value = ""; // 입력 필드 초기화
-            } else {
-                alert("투두리스트 항목 추가에 실패했습니다.");
-            }
-        })
-        .catch(error => console.error('Error adding todo:', error));
-    });
-
-    function addTodoToList(type, content) {
-        const li = document.createElement("li");
-        if (type === "title") {
-            const span = document.createElement("span");
-            span.classList.add("content", "bold");
-            span.textContent = content;
-            li.appendChild(span);
-        } else {
-            const span = document.createElement("span");
-            span.classList.add("content");
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            span.appendChild(checkbox);
-            span.appendChild(document.createTextNode(content));
-            li.appendChild(span);
-        }
-        const button = document.createElement("button");
-        button.classList.add("drag-handle");
-        button.textContent = "☰";
-        li.appendChild(button);
-        todoList.appendChild(li);
-    }
   });
 </script>
 </body>

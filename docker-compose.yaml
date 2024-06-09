@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  nginx:
+    #image: nginx:latest
+    build: ./nginx
+    container_name: nginx_container
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf # nginx 설정파일
+      - ./nginx/fastcgi-php.conf:/etc/nginx/snippets/fastcgi-php.conf # php cgi 경로
+      - .:/var/www/html # 프로젝트경로:내부 위치
+    depends_on:
+      - php
+
+  php:
+    build: ./php
+    #image: php:8.2.5-fpm
+    container_name: php_container
+    volumes:
+      - .:/var/www/html # 프로젝트 경로 
+    expose:
+      - "9000"
+  db:
+    image: mysql:8.0
+    container_name: mysql_container
+    ports:
+      - "3306:3306"  
+    environment:
+      MYSQL_HOST: localhost
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: team_todo # db 명
+      MYSQL_USER: lego
+      MYSQL_PASSWORD: lego
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./sql:/docker-entrypoint-initdb.d
+
+volumes:
+  db_data:

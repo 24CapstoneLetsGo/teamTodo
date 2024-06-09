@@ -2,10 +2,12 @@
 USE team_todo;
 
 -- 샘플 팀 데이터 삽입
-INSERT INTO teams (team_name) VALUES 
-('design'), 
-('develop'), 
-('AI');
+INSERT INTO teams (team_id, team_name) VALUES
+(1, 'designer'),
+(2, 'front-end'),
+(3, 'back-end'),
+(4, 'ai'),
+(5, 'planner');
 
 
 -- 샘플 사용자 데이터 삽입

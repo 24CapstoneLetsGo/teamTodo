@@ -17,12 +17,13 @@ CREATE TABLE teams (
 
 -- 사용자 테이블 생성
 CREATE TABLE users (
-    email VARCHAR(100) PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
-    phone_num VARCHAR(15) NOT NULL,
-    group_name VARCHAR(20) NOT NULL,
-    team_id INT,
+    email INT AUTO_INCREMENT PRIMARY KEY,
+    phone_num integer not null,
+    group_name varchar(20) not null,
+    team_name varchar(30) not null,
     passwd VARCHAR(100) NOT NULL,
+    team_id INT,
     FOREIGN KEY (team_id) REFERENCES teams(team_id)
 );
 
@@ -31,20 +32,27 @@ CREATE TABLE goals (
     goal_id INT AUTO_INCREMENT PRIMARY KEY,
     goal_name VARCHAR(50) NOT NULL,
     team_id INT,
-    FOREIGN KEY (team_id) REFERENCES teams(team_id)
+    username VARCHAR(50),
+    FOREIGN KEY (team_id) REFERENCES teams(team_id),
+    FOREIGN KEY (username) REFERENCES users(username)
 );
 
 -- 할 일 테이블 생성
 CREATE TABLE todo (
     todo_id INT AUTO_INCREMENT PRIMARY KEY,
     todo_content VARCHAR(200) NOT NULL,
-    is_done TINYINT NOT NULL,
+    is_done TINYINT NOT NULL DEFAULT 0,
     goal_id INT,
-    FOREIGN KEY (goal_id) REFERENCES goals(goal_id)
+    team_id INT,
+    username VARCHAR(50),
+    FOREIGN KEY (goal_id) REFERENCES goals(goal_id),
+    FOREIGN KEY (team_id) REFERENCES teams(team_id),
+    FOREIGN KEY (username) REFERENCES users(username)
 );
 
+
+'''
 -- 공지사항 테이블 생성
-/*
 CREATE TABLE notice (
     notice_id INT AUTO_INCREMENT PRIMARY KEY,
     team_id INT,
@@ -54,4 +62,4 @@ CREATE TABLE notice (
     FOREIGN KEY (username) REFERENCES users(username),
     FOREIGN KEY (todo_content) REFERENCES todo(todo_content)
 );
-*/
+'''

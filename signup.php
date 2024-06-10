@@ -47,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         die("Prepare failed: " . $conn->error);
     }
 
+    // 전화번호를 문자열로 바인딩하기 위해 ssssssi로 변경
     $stmt->bind_param("ssssssi", $username, $email, $phone_num, $group_name, $team_name, $passwd, $team_id);
     if ($stmt->execute()) {
         header("Location: login.html");

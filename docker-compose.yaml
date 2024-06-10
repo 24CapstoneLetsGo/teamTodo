@@ -22,14 +22,17 @@ services:
       - .:/var/www/html # 프로젝트 경로 
     expose:
       - "9000"
+    depends_on:
+      - db
+
   db:
     #image: mysql:8.0
-    build: ./mysql
+    build: ./sql
     container_name: mysql_container
     ports:
       - "3306:3306"  
     environment:
-      MYSQL_HOST: localhost
+      #MYSQL_HOST: localhost
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: team_todo # db 명
       MYSQL_USER: lego
@@ -37,8 +40,6 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - ./sql:/docker-entrypoint-initdb.d
-    command: bash -c "docker-entrypoint.sh mysqld & sleep 30 && mysql -u lego -plego team_todo < /docker-entrypoint-initdb.d/init.sql && mysql -u lego -plego team_todo < /docker-entrypoint-initdb.d/sampledata.sql"
-
 
 volumes:
   db_data:

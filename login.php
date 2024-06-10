@@ -1,5 +1,6 @@
 <?php
 session_start();
+ob_start(); // 출력 버퍼링 시작
 
 // 디버깅용 오류 보고 설정
 error_reporting(E_ALL);
@@ -20,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         die("Prepare failed: " . $conn->error);
     }
 
-    $stmt->bind_param("s", $email);
+    $stmt->bind_param("s", $email); // 이메일을 문자열로 바인딩
     if (!$stmt->execute()) {
         die("Execute failed: " . $stmt->error);
     }
@@ -31,18 +32,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "User does not exist.";
         $stmt->close();
         $conn->close();
+        ob_end_flush(); // 출력 버퍼링 끝내기
         exit();
     }
     $stmt->close();
 
     // 디버깅: 데이터베이스에서 가져온 비밀번호와 입력된 비밀번호 비교
-    echo "Database password: " . $db_password . "<br>";
-    echo "Provided password: " . $passwd . "<br>";
+    // echo "Database password: " . $db_password . "<br>";
+    // echo "Provided password: " . $passwd . "<br>";
 
     if ($db_password === $passwd) {
         // 로그인 성공
         $_SESSION['email'] = $email;
         header("Location: index.html");
+        ob_end_flush(); // 출력 버퍼링 끝내기
         exit();
     } else {
         // 로그인 실패
@@ -51,4 +54,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 $conn->close();
+ob_end_flush(); // 출력 버퍼링 끝내기
 ?>

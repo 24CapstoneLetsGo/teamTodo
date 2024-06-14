@@ -25,7 +25,7 @@
     </div>
     <div class="main-content">
         <h1>Edit profile</h1>
-        <form class="profile-form" action="save_profile.php" method="POST">
+        <form class="profile-form">
             <div class="profile-header">
                 <img src="./images/gu.png" alt="Profile Picture" class="profile-pic">
                 <div class="profile-info">
@@ -45,14 +45,14 @@
                 <div class="label-container">
                     <label for="affiliation">소속</label>
                 </div>
-                <input type="text" id="affiliation" name="group_name" disabled>
+                <input type="text" id="affiliation" name="affiliation" disabled>
             </div>
             <div class="form-block">
                 <div class="label-container">
-                    <label for="team_name">직무</label>
+                    <label for="job">직무</label>
                     <small class="note">직무 변경 시 1개월 동안 수정이 불가합니다. 관리자에게 문의하세요.</small>
                 </div>
-                <select id="team_name" name="team_name">
+                <select id="job" name="job">
                     <option value="designer">Designer</option>
                     <option value="front-end">Front-end</option>
                     <option value="back-end">Back-end</option>
@@ -76,12 +76,9 @@
                         document.getElementById("username").value = userInfo.username;
                         document.getElementById("email").value = userInfo.email;
                         document.getElementById("affiliation").value = userInfo.group_name;
-                        document.getElementById("team_name").value = userInfo.team_name;
+                        document.getElementById("job").value = userInfo.team_name;
                         document.querySelector(".profile-info .name").textContent = userInfo.username;
                         document.querySelector(".profile-info .position").textContent = `${userInfo.group_name} / ${getPositionName(userInfo.team_name)}`;
-
-                        // 팀 선택 기본값 설정
-                        document.getElementById("team_name").value = userInfo.team_name;
                     }
                 })
                 .catch(error => console.error('Error fetching user info:', error));
@@ -93,7 +90,7 @@
                     "back-end": "백엔드",
                     "ai": "AI",
                     "planner": "기획"
-                };  
+                };
                 return positions[position] || position;
             }
         });

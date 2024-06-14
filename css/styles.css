@@ -278,9 +278,7 @@ body {
 .todo-controls {
   display: flex;
   align-items: center;
-  position: absolute;
-  top: 20px;
-  right: 20px;
+  margin-bottom: 20px;
 }
 
 .todo-dropdown {

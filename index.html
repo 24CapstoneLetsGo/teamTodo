@@ -82,24 +82,7 @@
         <input type="text" id="todo-input" placeholder="내용을 입력하세요">
         <button class="add-todo-button">+</button>
       </div>
-      <ul id="todo-list">
-        <li>
-          <span class="content bold">홈페이지 UI 수정</span>
-          <button class="drag-handle">☰</button>
-        </li>
-        <li>
-          <span class="content"><input type="checkbox"> home 화면 비율 일치 (~5/13)</span>
-          <button class="drag-handle">☰</button>
-        </li>
-        <li>
-          <span class="content"><input type="checkbox"> 프로필 설정 페이지 색상 변경 (~5/28)</span>
-          <button class="drag-handle">☰</button>
-        </li>
-        <li>
-          <span class="content"><input type="checkbox"> Item Card</span>
-          <button class="drag-handle">☰</button>
-        </li>
-      </ul>
+      <ul id="todo-list"></ul>
     </div>
     <div class="bottom-right">
       <h2 class="bold">Notice</h2>
@@ -114,6 +97,12 @@
   document.addEventListener("DOMContentLoaded", function () {
     const teamMembers = document.querySelectorAll(".team-member-item");
     const memberDetails = document.getElementById("member-details");
+    const todoDropdown = document.querySelector(".todo-dropdown");
+    const todoInput = document.getElementById("todo-input");
+    const addTodoButton = document.querySelector(".add-todo-button");
+    const todoList = document.getElementById("todo-list");
+    const progressBar = document.querySelector(".progress-fill");
+    const progressPercent = document.querySelector(".progress-percent");
 
     // 로그인한 사용자 정보 가져오기
     function fetchLoggedInUser() {
@@ -275,6 +264,115 @@
 
     // 로그인한 사용자 정보 가져오기 및 표시
     fetchLoggedInUser();
+
+    // 기존 투두리스트 항목 로드
+    function loadTodos() {
+        fetch('load_todos.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                displayTodos(data);
+            })
+            .catch(error => console.error('Error loading todos:', error));
+    }
+
+    function displayTodos(data) {
+        const { goals, todos } = data;
+        goals.forEach(goal => {
+            addTodoToList("title", goal.goal_name);
+        });
+        todos.forEach(todo => {
+            addTodoToList("task", todo.todo_content, todo.is_done);
+        });
+    }
+
+    // 투두리스트 항목 추가
+    addTodoButton.addEventListener("click", function () {
+        const todoType = todoDropdown.value;
+        const todoContent = todoInput.value.trim();
+        if (todoContent === "") {
+            alert("내용을 입력하세요.");
+            return;
+        }
+
+        // 서버에 투두리스트 항목 추가 요청
+        fetch('add_todo.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ type: todoType, content: todoContent })
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                addTodoToList(todoType, todoContent);
+                todoInput.value = ""; // 입력 필드 초기화
+            } else {
+                alert("투두리스트 항목 추가에 실패했습니다.");
+            }
+        })
+        .catch(error => console.error('Error adding todo:', error));
+    });
+
+    function addTodoToList(type, content, isDone = 0) {
+        const li = document.createElement("li");
+        const contentDiv = document.createElement("div");
+        contentDiv.className = "content";
+
+        if (type === "title") {
+            const span = document.createElement("span");
+            span.classList.add("content", "bold");
+            span.textContent = content;
+            li.appendChild(span);
+        } else {
+            const span = document.createElement("span");
+            span.classList.add("content");
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = isDone;
+            span.appendChild(checkbox);
+            span.appendChild(document.createTextNode(content));
+            li.appendChild(span);
+
+            // 체크박스 상태 변경 시 진행률 업데이트
+            checkbox.addEventListener("change", updateProgress);
+        }
+
+        const dragButton = document.createElement("button");
+        dragButton.classList.add("drag-handle");
+        dragButton.textContent = "☰";
+        li.appendChild(contentDiv);
+        li.appendChild(dragButton);
+        todoList.appendChild(li);
+
+        // 진행률 업데이트
+        updateProgress();
+    }
+
+    function updateProgress() {
+        const checkboxes = todoList.querySelectorAll("input[type='checkbox']");
+        const checked = todoList.querySelectorAll("input[type='checkbox']:checked");
+        const totalTasks = checkboxes.length;
+        const completedTasks = checked.length;
+        const progress = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
+
+        progressBar.style.width = `${progress}%`;
+        progressPercent.textContent = `${progress}%`;
+    }
+
+    // 기존 투두리스트 항목 로드
+    loadTodos();
+
+    // SortableJS를 이용한 드래그 앤 드롭 기능 활성화
+    new Sortable(todoList, {
+        handle: '.drag-handle',
+        animation: 150,
+        draggable: 'li',
+    });
   });
 </script>
 </body>

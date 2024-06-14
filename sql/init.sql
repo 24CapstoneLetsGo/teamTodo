@@ -18,7 +18,8 @@ USE team_todo;
 -- 팀 테이블 생성
 CREATE TABLE IF NOT EXISTS teams (
     team_id INT AUTO_INCREMENT PRIMARY KEY,
-    team_name VARCHAR(50) NOT NULL
+    team_name VARCHAR(50) NOT NULL,
+    INDEX idx_team_name (team_name)
 );
 
 -- 사용자 테이블 생성
@@ -29,9 +30,7 @@ CREATE TABLE IF NOT EXISTS users (
     group_name VARCHAR(20) NOT NULL,
     team_id INT,
     passwd VARCHAR(100) NOT NULL,
-    FOREIGN KEY (team_id) REFERENCES teams(team_id),
-    INDEX idx_team_id (team_id),
-    INDEX idx_username (username)
+    FOREIGN KEY (team_id) REFERENCES teams(team_id)
 );
 
 -- 목표 테이블 생성
@@ -39,11 +38,7 @@ CREATE TABLE IF NOT EXISTS goals (
     goal_id INT AUTO_INCREMENT PRIMARY KEY,
     goal_name VARCHAR(50) NOT NULL,
     team_id INT,
-    username VARCHAR(50),
-    FOREIGN KEY (team_id) REFERENCES teams(team_id),
-    FOREIGN KEY (username) REFERENCES users(username),
-    INDEX idx_team_id (team_id),
-    INDEX idx_goals_username (username)
+    FOREIGN KEY (team_id) REFERENCES teams(team_id)
 );
 
 -- 할 일 테이블 생성
@@ -53,11 +48,6 @@ CREATE TABLE IF NOT EXISTS todo (
     is_done TINYINT NOT NULL DEFAULT 0,
     goal_id INT,
     team_id INT,
-    username VARCHAR(50),
     FOREIGN KEY (goal_id) REFERENCES goals(goal_id),
-    FOREIGN KEY (team_id) REFERENCES teams(team_id),
-    FOREIGN KEY (username) REFERENCES users(username),
-    INDEX idx_goal_id (goal_id),
-    INDEX idx_team_id (team_id),
-    INDEX idx_todo_username (username)
+    FOREIGN KEY (team_id) REFERENCES teams(team_id)
 );

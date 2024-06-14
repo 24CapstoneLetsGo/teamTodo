@@ -16,11 +16,11 @@ INSERT INTO users (email, username, phone_num, group_name, team_id, passwd) VALU
 ('moon@dankook.ac.kr', 'moon', '1034567890', '단국대학교', 3, '111');
 
 -- 샘플 목표 데이터 삽입
-INSERT INTO goals (goal_name, team_id, username) VALUES
-('클컴', 1, 'shin'),
-('캡스톤', 1, 'shin'),
-('클컴', 2, 'seo'),
-('캡스톤', 3, 'moon');
+INSERT INTO goals (goal_name, team_id) VALUES
+('클컴', 1),
+('캡스톤', 1),
+('클컴', 2),
+('캡스톤', 3);
 
 -- 샘플 할 일 데이터 삽입
 INSERT INTO todo (todo_content, is_done, goal_id, team_id, username) VALUES

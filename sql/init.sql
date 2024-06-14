@@ -53,3 +53,4 @@ CREATE TABLE IF NOT EXISTS todo (
     FOREIGN KEY (team_id) REFERENCES teams(team_id),
     FOREIGN KEY (email) REFERENCES users(email)
 );
+

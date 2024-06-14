@@ -8,6 +8,8 @@ ENV MYSQL_PASSWORD=lego
 
 # 복사하는 SQL 스크립트
 COPY . /docker-entrypoint-initdb.d/
+COPY ./my.cnf /etc/mysql/mysql.conf.d/
+
 
 # 기본 MySQL entrypoint를 유지하면서 초기화 스크립트를 실행하는 CMD 설정
 CMD ["mysqld"]

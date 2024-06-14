@@ -48,6 +48,8 @@ CREATE TABLE IF NOT EXISTS todo (
     is_done TINYINT NOT NULL DEFAULT 0,
     goal_id INT,
     team_id INT,
+    email VARCHAR(100),
     FOREIGN KEY (goal_id) REFERENCES goals(goal_id),
-    FOREIGN KEY (team_id) REFERENCES teams(team_id)
+    FOREIGN KEY (team_id) REFERENCES teams(team_id),
+    FOREIGN KEY (email) REFERENCES users(email)
 );

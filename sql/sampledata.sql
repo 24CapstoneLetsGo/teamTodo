@@ -23,7 +23,7 @@ INSERT INTO goals (goal_name, team_id) VALUES
 ('캡스톤', 3);
 
 -- 샘플 할 일 데이터 삽입
-INSERT INTO todo (todo_content, is_done, goal_id, team_id, username) VALUES
-('UI 디자인', 0, 1, 1, 'shin'),
-('데이터 분석', 0, 2, 1, 'shin'),
-('모델 트레이닝', 0, 3, 2, 'seo');
+INSERT INTO todo (todo_content, is_done, goal_id, team_id, email) VALUES
+('UI 디자인', 0, 1, 1, 'shin@dankook.ac.kr'),
+('데이터 분석', 0, 2, 1, 'shin@dankook.ac.kr'),
+('모델 트레이닝', 0, 3, 2, 'seo@dankook.ac.kr');

@@ -10,5 +10,9 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 // 연결 확인
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
-}   
+}
+
+// 에러 보고 활성화
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 ?>

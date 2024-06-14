@@ -60,12 +60,13 @@
         <div class="team-list">
           <h3>Team Members</h3>
           <ul>
-            <li class="team-member-item" data-team="designer">Designer</li>
-            <li class="team-member-item" data-team="front-end">Front-end</li>
-            <li class="team-member-item" data-team="back-end">Back-end</li>
-            <li class="team-member-item" data-team="ai">AI</li>
-            <li class="team-member-item" data-team="planner">기획</li>
-          </ul>
+            <li class="team-member-item" data-team-id="1">Designer</li>
+            <li class="team-member-item" data-team-id="2">Front-end</li>
+            <li class="team-member-item" data-team-id="3">Back-end</li>
+            <li class="team-member-item" data-team-id="4">AI</li>
+            <li class="team-member-item" data-team-id="5">Planner</li>
+        </ul>
+        
         </div>
         <div class="member-details" id="member-details"></div>
       </div>
@@ -120,14 +121,21 @@
     }
 
     // 팀 멤버 정보 가져오기
-    function fetchUsersByTeam(team) {
-        fetch(`get_team_users.php?team=${team}`)
-            .then(response => response.json())
-            .then(users => {
+    function fetchUsersByTeam(team_id) {
+    fetch(`get_team_users.php?team_id=${team_id}`)
+        .then(response => response.json())
+        .then(users => {
+            console.log(users); // 응답 데이터를 출력하여 확인
+            if (Array.isArray(users)) {
                 displayUsers(users);
-            })
-            .catch(error => console.error('Error fetching users:', error));
+            } else {
+                console.error('Fetched data is not an array:', users);
+            }
+        })
+        .catch(error => console.error('Error fetching users:', error));
     }
+
+
 
     // 사용자 정보 표시
     function displayUsers(users) {
@@ -196,20 +204,21 @@
     }
 
     // 팀 선택 표시
-    function selectTeam(team) {
-        const selectedTeam = document.querySelector(`.team-member-item[data-team='${team}']`);
-        if (selectedTeam) {
-            selectedTeam.classList.add("selected");
-            fetchUsersByTeam(team);
-        }
+    function selectTeam(team_id) {
+    const selectedTeam = document.querySelector(`.team-member-item[data-team-id='${team_id}']`);
+    if (selectedTeam) {
+        selectedTeam.classList.add("selected");
+        fetchUsersByTeam(team_id);
+    }
     }
 
     teamMembers.forEach(function (member) {
         member.addEventListener("click", function () {
-            const team = this.getAttribute("data-team");
-            fetchUsersByTeam(team);
+            const team_id = this.getAttribute("data-team-id");
+            fetchUsersByTeam(team_id);
         });
     });
+    fetchLoggedInUser();
 
     // 오늘 날짜 배경색 변경
     const today = new Date();

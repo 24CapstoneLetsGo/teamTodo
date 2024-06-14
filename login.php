@@ -35,10 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     $stmt->close();
 
-    // 디버깅: 데이터베이스에서 가져온 비밀번호와 입력된 비밀번호 비교
-    echo "Database password: " . $db_password . "<br>";
-    echo "Provided password: " . $passwd . "<br>";
-
+    // 비밀번호 비교
     if ($db_password === $passwd) {
         // 로그인 성공
         $_SESSION['email'] = $email;

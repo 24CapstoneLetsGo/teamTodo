@@ -9,7 +9,7 @@ if (!isset($_SESSION['email'])) {
 
 $email = $_SESSION['email'];
 
-$sql = "SELECT username, email, phone_num, group_name, team_name FROM users WHERE email = ?";
+$sql = "SELECT username, email, phone_num, group_name, team_id FROM users WHERE email = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $email);
 $stmt->execute();
@@ -18,4 +18,3 @@ $user = $result->fetch_assoc();
 
 echo json_encode($user);
 ?>
-

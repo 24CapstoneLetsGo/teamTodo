@@ -7,16 +7,16 @@ if (!isset($_SESSION['email'])) {
     exit;
 }
 
-if (!isset($_GET['team'])) {
+if (!isset($_GET['team_id'])) {
     echo json_encode(["error" => "No team specified"]);
     exit;
 }
 
-$team = $_GET['team'];
+$team_id = $_GET['team_id'];
 
-$sql = "SELECT username, email, phone_num, group_name, team_name FROM users WHERE team_name = ?";
+$sql = "SELECT username, email, phone_num, group_name, team_id FROM users WHERE team_id = ?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $team);
+$stmt->bind_param("i", $team_id); // team_id는 정수형이므로 "i" 사용
 $stmt->execute();
 $result = $stmt->get_result();
 $users = [];
@@ -27,4 +27,3 @@ while ($row = $result->fetch_assoc()) {
 
 echo json_encode($users);
 ?>
-

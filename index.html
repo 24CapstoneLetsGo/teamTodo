@@ -65,8 +65,7 @@
             <li class="team-member-item" data-team-id="3">Back-end</li>
             <li class="team-member-item" data-team-id="4">AI</li>
             <li class="team-member-item" data-team-id="5">Planner</li>
-        </ul>
-        
+          </ul>
         </div>
         <div class="member-details" id="member-details"></div>
       </div>
@@ -95,7 +94,7 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
     const teamMembers = document.querySelectorAll(".team-member-item");
     const memberDetails = document.getElementById("member-details");
     const todoDropdown = document.querySelector(".todo-dropdown");
@@ -110,32 +109,31 @@
         fetch('get_user_info.php')
             .then(response => response.json())
             .then(userInfo => {
+                console.log("User info:", userInfo);
                 if (userInfo.error) {
                     alert(userInfo.error);
                     return;
                 }
                 displayUserInfo(userInfo);
-                selectTeam(userInfo.team_name);
+                selectTeam(userInfo.team_id); // team_id를 사용하여 팀 선택
             })
             .catch(error => console.error('Error fetching logged in user info:', error));
     }
 
     // 팀 멤버 정보 가져오기
     function fetchUsersByTeam(team_id) {
-    fetch(`get_team_users.php?team_id=${team_id}`)
-        .then(response => response.json())
-        .then(users => {
-            console.log(users); // 응답 데이터를 출력하여 확인
-            if (Array.isArray(users)) {
-                displayUsers(users);
-            } else {
-                console.error('Fetched data is not an array:', users);
-            }
-        })
-        .catch(error => console.error('Error fetching users:', error));
+        fetch(`get_team_users.php?team_id=${team_id}`)
+            .then(response => response.json())
+            .then(users => {
+                console.log("Fetched users by team:", users); // 응답 데이터를 출력하여 확인
+                if (Array.isArray(users)) {
+                    displayUsers(users);
+                } else {
+                    console.error('Fetched data is not an array:', users);
+                }
+            })
+            .catch(error => console.error('Error fetching users:', error));
     }
-
-
 
     // 사용자 정보 표시
     function displayUsers(users) {
@@ -203,21 +201,30 @@
         memberDetails.appendChild(userProfile);
     }
 
-    // 팀 선택 표시
+    // 팀 선택 표시 및 팀 멤버 정보 가져오기
     function selectTeam(team_id) {
-    const selectedTeam = document.querySelector(`.team-member-item[data-team-id='${team_id}']`);
-    if (selectedTeam) {
-        selectedTeam.classList.add("selected");
-        fetchUsersByTeam(team_id);
-    }
+        const selectedTeam = document.querySelector(`.team-member-item[data-team-id='${team_id}']`);
+        if (selectedTeam) {
+            // 모든 팀 멤버 아이템에서 'selected' 클래스 제거
+            teamMembers.forEach(function (member) {
+                member.classList.remove("selected");
+            });
+
+            // 선택된 팀 멤버 아이템에 'selected' 클래스 추가
+            selectedTeam.classList.add("selected");
+            fetchUsersByTeam(team_id); // 팀 멤버 정보 가져오기
+        }
     }
 
+    // 팀 멤버 클릭 이벤트 설정
     teamMembers.forEach(function (member) {
         member.addEventListener("click", function () {
             const team_id = this.getAttribute("data-team-id");
-            fetchUsersByTeam(team_id);
+            selectTeam(team_id);
         });
     });
+
+    // 로그인한 사용자 정보 가져오기
     fetchLoggedInUser();
 
     // 오늘 날짜 배경색 변경
@@ -226,53 +233,50 @@
     let currentYear = today.getFullYear();
 
     function generateCalendar(month, year) {
-      const calendar = document.querySelector("#calendar tbody");
-      calendar.innerHTML = "";
-      const monthAndYear = document.getElementById("calendar-month");
-      const firstDay = new Date(year, month).getDay();
-      const daysInMonth = 32 - new Date(year, month, 32).getDate();
-      const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-      monthAndYear.textContent = `${months[month]} ${year}`;
+        const calendar = document.querySelector("#calendar tbody");
+        calendar.innerHTML = "";
+        const monthAndYear = document.getElementById("calendar-month");
+        const firstDay = new Date(year, month).getDay();
+        const daysInMonth = 32 - new Date(year, month, 32).getDate();
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        monthAndYear.textContent = `${months[month]} ${year}`;
 
-      let date = 1;
-      for (let i = 0; i < 6; i++) {
-        const row = document.createElement("tr");
-        for (let j = 0; j < 7; j++) {
-          if (i === 0 && j < firstDay) {
-            const cell = document.createElement("td");
-            row.appendChild(cell);
-          } else if (date > daysInMonth) {
-            break;
-          } else {
-            const cell = document.createElement("td");
-            cell.textContent = date;
-            if (date === today.getDate() && year === today.getFullYear() && month === today.getMonth()) {
-              cell.style.backgroundColor = "#C6E4FF";
+        let date = 1;
+        for (let i = 0; i < 6; i++) {
+            const row = document.createElement("tr");
+            for (let j = 0; j < 7; j++) {
+                if (i === 0 && j < firstDay) {
+                    const cell = document.createElement("td");
+                    row.appendChild(cell);
+                } else if (date > daysInMonth) {
+                    break;
+                } else {
+                    const cell = document.createElement("td");
+                    cell.textContent = date;
+                    if (date === today.getDate() && year === today.getFullYear() && month === today.getMonth()) {
+                        cell.style.backgroundColor = "#C6E4FF";
+                    }
+                    row.appendChild(cell);
+                    date++;
+                }
             }
-            row.appendChild(cell);
-            date++;
-          }
+            calendar.appendChild(row);
         }
-        calendar.appendChild(row);
-      }
     }
 
     document.querySelector(".prev-month").addEventListener("click", function () {
-      currentMonth = (currentMonth === 0) ? 11 : currentMonth - 1;
-      currentYear = (currentMonth === 11) ? currentYear - 1 : currentYear;
-      generateCalendar(currentMonth, currentYear);
+        currentMonth = (currentMonth === 0) ? 11 : currentMonth - 1;
+        currentYear = (currentMonth === 11) ? currentYear - 1 : currentYear;
+        generateCalendar(currentMonth, currentYear);
     });
 
     document.querySelector(".next-month").addEventListener("click", function () {
-      currentMonth = (currentMonth === 11) ? 0 : currentMonth + 1;
-      currentYear = (currentMonth === 0) ? currentYear + 1 : currentYear;
-      generateCalendar(currentMonth, currentYear);
+        currentMonth = (currentMonth === 11) ? 0 : currentMonth + 1;
+        currentYear = (currentMonth === 0) ? currentYear + 1 : currentYear;
+        generateCalendar(currentMonth, currentYear);
     });
 
     generateCalendar(currentMonth, currentYear);
-
-    // 로그인한 사용자 정보 가져오기 및 표시
-    fetchLoggedInUser();
 
     // 기존 투두리스트 항목 로드
     function loadTodos() {
@@ -298,7 +302,6 @@
         });
     }
 
-
     // 투두리스트 항목 추가
     addTodoButton.addEventListener("click", function () {
         const todoType = todoDropdown.value;
@@ -307,6 +310,7 @@
             alert("내용을 입력하세요.");
             return;
         }
+        console.log("Adding todo:", { type: todoType, content: todoContent });
 
         // 서버에 투두리스트 항목 추가 요청
         fetch('add_todo.php', {
@@ -316,13 +320,24 @@
             },
             body: JSON.stringify({ type: todoType, content: todoContent })
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log("Server response:", response);
+            return response.text().then(text => {
+                console.log("Response text:", text);
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    throw new Error('Invalid JSON: ' + text);
+                }
+            });
+        })
         .then(result => {
+            console.log("Parsed response:", result);
             if (result.success) {
                 addTodoToList(todoType, todoContent);
                 todoInput.value = ""; // 입력 필드 초기화
             } else {
-                alert("투두리스트 항목 추가에 실패했습니다.");
+                alert("투두리스트 항목 추가에 실패했습니다: " + result.message);
             }
         })
         .catch(error => console.error('Error adding todo:', error));
@@ -377,14 +392,14 @@
     // 기존 투두리스트 항목 로드
     loadTodos();
 
-
     // SortableJS를 이용한 드래그 앤 드롭 기능 활성화
     new Sortable(todoList, {
         handle: '.drag-handle',
         animation: 150,
         draggable: 'li',
     });
-  });
+});
 </script>
 </body>
 </html>
+

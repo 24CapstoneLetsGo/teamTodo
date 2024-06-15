@@ -110,12 +110,13 @@
         fetch('get_user_info.php')
             .then(response => response.json())
             .then(userInfo => {
-                if (userInfo.error) {
+                console.log("User info:", userInfo);
+		if (userInfo.error) {
                     alert(userInfo.error);
                     return;
                 }
                 displayUserInfo(userInfo);
-                selectTeam(userInfo.team_name);
+                selectTeam(user.team_name);
             })
             .catch(error => console.error('Error fetching logged in user info:', error));
     }
@@ -125,7 +126,7 @@
     fetch(`get_team_users.php?team_id=${team_id}`)
         .then(response => response.json())
         .then(users => {
-            console.log(users); // 응답 데이터를 출력하여 확인
+            console.log("Fetched users by team:", users); // 응답 데이터를 출력하여 확인
             if (Array.isArray(users)) {
                 displayUsers(users);
             } else {
@@ -139,7 +140,7 @@
 
     // 사용자 정보 표시
     function displayUsers(users) {
-        memberDetails.innerHTML = ""; // 기존 내용을 지우고 새로 추가
+	memberDetails.innerHTML = ""; // 기존 내용을 지우고 새로 추가
         users.forEach(user => {
             const userProfile = document.createElement("div");
             userProfile.classList.add("profile-set");
@@ -193,7 +194,7 @@
 
         const profileTeam = document.createElement("p");
         profileTeam.classList.add("position");
-        profileTeam.textContent = `${userInfo.group_name} / ${userInfo.team_name}`;
+        profileTeam.textContent = `${userInfo.group_name} / ${user.team_name}`;
 
         profileInfo.appendChild(profileName);
         profileInfo.appendChild(profileTeam);
@@ -205,17 +206,20 @@
 
     // 팀 선택 표시
     function selectTeam(team_id) {
-    const selectedTeam = document.querySelector(`.team-member-item[data-team-id='${team_id}']`);
-    if (selectedTeam) {
-        selectedTeam.classList.add("selected");
-        fetchUsersByTeam(team_id);
-    }
+    	const selectedTeam = document.querySelector(`.team-member-item[data-team-id='${team_id}']`);
+    	if (selectedTeam) {
+        	teamMembers.forEach(function (member) {
+              		member.classList.remove("selected");
+        	});
+		selectedTeam.classList.add("selected");
+        	fetchUsersByTeam(team_id);
+    	}
     }
 
     teamMembers.forEach(function (member) {
         member.addEventListener("click", function () {
             const team_id = this.getAttribute("data-team-id");
-            fetchUsersByTeam(team_id);
+            selectTeam(team_id);
         });
     });
     fetchLoggedInUser();

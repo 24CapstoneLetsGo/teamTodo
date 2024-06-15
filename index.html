@@ -307,6 +307,7 @@
             alert("내용을 입력하세요.");
             return;
         }
+	console.log("Adding todo:", { type: todoType, content: todoContent });
 
         // 서버에 투두리스트 항목 추가 요청
         fetch('add_todo.php', {
@@ -316,16 +317,27 @@
             },
             body: JSON.stringify({ type: todoType, content: todoContent })
         })
-        .then(response => response.json())
-        .then(result => {
+        .then(response => {
+            console.log("Server response:", response);
+            return response.text().then(text => {
+                console.log("Response text:", text);
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    throw new Error('Invalid JSON: ' + text);
+                }
+            });
+        })
+	.then(result => {
+            console.log("Parsed response:", result);
             if (result.success) {
                 addTodoToList(todoType, todoContent);
                 todoInput.value = ""; // 입력 필드 초기화
             } else {
-                alert("투두리스트 항목 추가에 실패했습니다.");
+                alert("투두리스트 항목 추가에 실패했습니다: " + result.message);
             }
         })
-        .catch(error => console.error('Error adding todo:', error));
+	.catch(error => console.error('Error adding todo:', error));
     });
 
     function addTodoToList(type, content, isDone = 0) {

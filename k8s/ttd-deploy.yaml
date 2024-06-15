@@ -1,78 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql-deployment
+  name: web-deployment
   namespace: ttd
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql
+      app: web
   template:
     metadata:
       labels:
-        app: mysql
-    spec:
-      containers:
-        - name: mysql-container
-          image: zox2m/mysql:8.0
-          ports:
-            - containerPort: 3306
-          env:
-            - name: MYSQL_ROOT_PASSWORD
-              value: root
-            - name: MYSQL_DATABASE
-              value: team_todo
-          volumeMounts:
-            - name: mysql-pv
-              mountPath: /var/lib/mysql
-      volumes:
-        - name: mysql-pv
-          persistentVolumeClaim:
-            claimName: mysql-pvc
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: php-deployment
-  namespace: ttd
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: php
-  template:
-    metadata:
-      labels:
-        app: php
-    spec:
-      containers:
-        - name: php-container
-          image: zox2m/php:8.2
-          ports:
-            - containerPort: 9000
-          volumeMounts:
-            - name: php-code
-              mountPath: /var/www/html
-      volumes:
-        - name: php-code
-          configMap:
-            name: php-config
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx-deployment
-  namespace: ttd
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
+        app: web
     spec:
       containers:
         - name: nginx-container
@@ -80,14 +19,16 @@ spec:
           ports:
             - containerPort: 80
           volumeMounts:
-            - name: nginx-config
-              mountPath: /etc/nginx/conf.d
-            - name: php-code
+            - name: web-files
+              mountPath: /var/www/html
+        - name: php-container
+          image: zox2m/php:8.2
+          ports:
+            - containerPort: 9000
+          volumeMounts:
+            - name: web-files
               mountPath: /var/www/html
       volumes:
-        - name: nginx-config
+        - name: web-files
           configMap:
-            name: nginx-config
-        - name: php-code
-          configMap:
-            name: php-config
+            name: web-files

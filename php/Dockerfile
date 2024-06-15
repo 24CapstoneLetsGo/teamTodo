@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /var/www/html
 
 # Copy the current directory contents into the container at /var/www/html
-COPY . .
+#COPY . .
 
 # Expose port 9000 for PHP-FPM
 EXPOSE 9000

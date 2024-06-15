@@ -14,21 +14,64 @@ spec:
         app: web
     spec:
       containers:
-        - name: nginx-container
-          image: zox2m/nginx:latest
-          ports:
-            - containerPort: 80
-          volumeMounts:
-            - name: web-files
-              mountPath: /var/www/html
-        - name: php-container
-          image: zox2m/php:8.2
-          ports:
-            - containerPort: 9000
-          volumeMounts:
-            - name: web-files
-              mountPath: /var/www/html
-      volumes:
+      - name: nginx-container
+        image: zox2m/nginx:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
         - name: web-files
-          configMap:
-            name: web-files
+          mountPath: /var/www/html
+      - name: php-container
+        image: zox2m/php:8.2
+        ports:
+        - containerPort: 9000
+        volumeMounts:
+        - name: web-files
+          mountPath: /var/www/html
+      volumes:
+      - name: web-files
+        configMap:
+          name: web-files
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment
+  namespace: ttd
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql-container
+        image: zox2m/mysql:8.0
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_DATABASE
+          value: team_todo
+        - name: MYSQL_USER
+          value: lego
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: MYSQL_PASSWORD
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pvc

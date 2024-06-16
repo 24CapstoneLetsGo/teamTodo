@@ -86,9 +86,7 @@
     </div>
     <div class="bottom-right">
       <h2 class="bold">Notice</h2>
-      <div id="notice-list">
-        <p>신유진 님이 ToDo를 생성하였습니다.</p>
-      </div>
+      <div id="notice-list"></div>
     </div>
   </div>
 </div>
@@ -327,7 +325,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (result.success) {
                 addTodoToList(todoType, todoContent, 0, result.todo_id);
                 todoInput.value = ""; // 입력 필드 초기화
-                addNotice(todoType, todoContent, result.username); // 알림 추가
+                addNotice(todoType, result.username); // 알림 추가
             } else {
                 alert("투두리스트 항목 추가에 실패했습니다: " + result.message);
             }
@@ -370,7 +368,7 @@ document.addEventListener("DOMContentLoaded", function () {
         updateProgress();
     }
 
-    function addNotice(type, content, username) {
+    function addNotice(type, username) {
         const noticeMessage = document.createElement("p");
         if (type === "title") {
             noticeMessage.textContent = `${username} 님이 Goal 을 생성하였습니다.`;
@@ -422,8 +420,5 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
-</body>
-</html>
-
 </body>
 </html>

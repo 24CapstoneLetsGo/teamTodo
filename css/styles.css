@@ -278,8 +278,8 @@ body {
   .todo-controls {
     display: flex;
     align-items: center;
-    justify-content: flex-end; /* 수정된 부분: 오른쪽 정렬 */
-    margin-bottom: 20px;
+    gap: 10px;
+    margin-top: 10px; /* To add some space below the h2 */
   }
   
   .todo-dropdown {
@@ -287,6 +287,7 @@ body {
     margin-right: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
+    flex: 0 0 auto;
   }
   
   .add-todo-button {
@@ -300,8 +301,15 @@ body {
     line-height: 24px;
     text-align: center;
     cursor: pointer;
+    flex: 0 0 auto;
+    margin-left: auto;
   }
   
+
+  #todo-input {
+    flex: 1;
+  }
+
   .bottom-right {
     grid-area: 1 / 2 / 2 / 3;
     border-top: 7px solid #000;

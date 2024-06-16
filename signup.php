@@ -42,12 +42,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // 사용자 정보 삽입
-    $stmt = $conn->prepare("INSERT INTO users (username, email, phone_num, group_name, team_name, passwd, team_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO users (email, username, phone_num, group_name, team_id, passwd) VALUES (?, ?, ?, ?, ?, ?)");
     if ($stmt === false) {
         die("Prepare failed: " . $conn->error);
     }
 
-    $stmt->bind_param("ssssssi", $username, $email, $phone_num, $group_name, $team_name, $passwd, $team_id);
+    $stmt->bind_param("ssssss", $email, $username, $phone_num, $group_name, $team_id, $passwd);
     if ($stmt->execute()) {
         header("Location: login.html");
         exit();

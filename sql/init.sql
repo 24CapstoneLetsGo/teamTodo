@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS goals (
     goal_id INT AUTO_INCREMENT PRIMARY KEY,
     goal_name VARCHAR(50) NOT NULL,
     team_id INT,
+    position INT DEFAULT 0,
     FOREIGN KEY (team_id) REFERENCES teams(team_id)
 );
 
@@ -49,8 +50,19 @@ CREATE TABLE IF NOT EXISTS todo (
     goal_id INT,
     team_id INT,
     email VARCHAR(100),
+    position INT DEFAULT 0,
     FOREIGN KEY (goal_id) REFERENCES goals(goal_id),
     FOREIGN KEY (team_id) REFERENCES teams(team_id),
     FOREIGN KEY (email) REFERENCES users(email)
 );
 
+-- 노티스 테이블 생성
+CREATE TABLE IF NOT EXISTS notices (
+    notice_id INT AUTO_INCREMENT PRIMARY KEY,
+    notice_content TEXT NOT NULL,
+    todo_id INT,
+    goal_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (todo_id) REFERENCES todo(todo_id),
+    FOREIGN KEY (goal_id) REFERENCES goals(goal_id)
+);

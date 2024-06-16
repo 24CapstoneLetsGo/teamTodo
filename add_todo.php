@@ -17,7 +17,7 @@ if (!isset($_SESSION['email'])) {
 $email = $_SESSION['email'];
 
 // 사용자 정보 가져오기
-$user_stmt = $conn->prepare("SELECT team_id FROM users WHERE email = ?");
+$user_stmt = $conn->prepare("SELECT username, team_id FROM users WHERE email = ?");
 if (!$user_stmt) {
     error_log("Failed to prepare user query: " . $conn->error);
     echo json_encode(["success" => false, "message" => "Failed to prepare user query: " . $conn->error]);
@@ -36,6 +36,7 @@ if (!$user_result) {
     exit;
 }
 $user = $user_result->fetch_assoc();
+$username = $user['username'];
 $team_id = $user['team_id'];
 
 $data = json_decode(file_get_contents('php://input'), true);
@@ -46,10 +47,11 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 }
 $type = $data['type'];
 $content = $data['content'];
+$is_done = isset($data['is_done']) ? $data['is_done'] : 0;
 
 // 로그 추가
 error_log("Received data: " . print_r($data, true));
-error_log("Type: $type, Content: $content, Team ID: $team_id");
+error_log("Type: $type, Content: $content, Team ID: $team_id, Is Done: $is_done");
 
 if ($type === 'title') {
     // goals 테이블에 제목 추가
@@ -63,17 +65,17 @@ if ($type === 'title') {
 } else {
     // todo 테이블에 할 일 추가
     $goal_id = NULL; // 기본적으로 NULL로 설정 (목표에 속하지 않는 할 일)
-    $stmt = $conn->prepare("INSERT INTO todo (todo_content, is_done, goal_id, team_id) VALUES (?, 0, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO todo (todo_content, is_done, goal_id, team_id, email) VALUES (?, ?, ?, ?, ?)");
     if (!$stmt) {
         error_log("Failed to prepare todo query: " . $conn->error);
         echo json_encode(["success" => false, "message" => "Failed to prepare todo query: " . $conn->error]);
         exit;
     }
-    $stmt->bind_param("sii", $content, $goal_id, $team_id);
+    $stmt->bind_param("siiis", $content, $is_done, $goal_id, $team_id, $email);
 }
 
 if ($stmt->execute()) {
-    echo json_encode(["success" => true]);
+    echo json_encode(["success" => true, "username" => $username, "todo_id" => $stmt->insert_id]);
 } else {
     error_log("Failed to add todo: " . $stmt->error);
     echo json_encode(["success" => false, "message" => "Failed to add todo: " . $stmt->error]);
@@ -82,4 +84,3 @@ if ($stmt->execute()) {
 $stmt->close();
 $conn->close();
 ?>
-

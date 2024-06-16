@@ -1,379 +1,379 @@
 body {
-  font-family: Arial, sans-serif;
-  background-color: #FFFDD0;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  height: 100vh;
-}
-
-.sidebar {
-  background-color: #FFFDD0;
-  width: 200px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 0;
-}
-
-.sidebar .logo {
-  font-size: 36px;
-  color: #4DCADB;
-  font-weight: bold;
-  margin-bottom: 20px;
-  line-height: 0.5;
-  width: 100%;
-}
-
-.sidebar .team {
-  text-align: left;
-  display: block;
-  margin-left: 20px;
-}
-
-.sidebar .todo {
-  text-align: right;
-  display: block;
-  margin-right: 20px;
-}
-
-.sidebar nav ul {
-  list-style-type: none;
-  padding: 0;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.sidebar nav ul li {
-  margin: 20px 0;
-}
-
-.sidebar nav ul li button {
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-}
-
-.sidebar nav ul li button img {
-  width: 50px;
-  height: 50px;
-}
-
-.help {
-  margin-bottom: 20px;
-}
-
-.help button {
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-}
-
-.help button img {
-  width: 50px;
-  height: 50px;
-}
-
-.main-container {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  padding: 20px;
-  width: calc(100% - 200px);
-}
-
-.top-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.bottom-container {
-  display: grid;
-  grid-template-columns: 3fr 2fr;
-  gap: 10px;
-  flex-grow: 1;
-}
-
-.top-left, .top-right, .bottom-left, .bottom-right {
-  background-color: white;
-  border: 1px solid #ccc;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  border-top: 0px solid #000;
-}
-
-.top-left {
-  grid-area: 1 / 1 / 2 / 2;
-  border-top: 7px solid #000;
-  position: relative;
-}
-
-#calendar {
-  height: 90%;
-  width: 100%;
-  table-layout: fixed;
-}
-
-.calendar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.calendar-nav {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-}
-
-.calendar-nav-button {
-  background-color: transparent;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #000;
-}
-
-.top-right {
-  display: grid;
-  background-color: #FFFDD0;
-  grid-template-rows: auto 1fr;
-  gap: 10px;
-  padding: 0;
-  border: none;
-}
-
-.progress {
-  background-color: white;
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  margin: 0;
-  position: relative;
-  text-align: left;
-  border-top: 7px solid #000;
-}
-
-.progress h2 {
-  margin: 0 0 10px 0;
-}
-
-.progress-percent {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.progress-bar {
-  width: 100%;
-  background-color: #f3f3f3;
-  border-radius: 10px;
-  overflow: hidden;
-  height: 20px;
-  margin: 20px 0;
-}
-
-.progress-fill {
-  height: 100%;
-  width: 33%;
-  background-color: #4DCADB;
-}
-
-.team-members {
-  background-color: white;
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  margin: 0;
-  display: flex;
-  border-top: 7px solid #000;
-}
-
-.team-members .team-list {
-  flex: 1;
-  border-right: 1px solid #ccc;
-  padding-right: 5px;
-  padding-left: 10px;
-}
-
-.team-members .team-list h3 {
-  margin-top: 0;
-}
-
-.team-members .team-list ul {
-  padding: 0;
-  list-style-type: none;
-}
-
-.team-member-item {
-  padding: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.team-member-item:hover {
-  background-color: #f0f0f0;
-}
-
-.team-members .member-details {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: left;
-  padding-left: 15px;
-}
-
-.profile-set {
-  display: none;
-  align-items: center;
-}
-
-#designer-profile, #user-profile {
-  display: flex;
-}
-
-.profile-pic {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin-right: 20px;
-}
-
-.profile-info {
-  text-align: left;
-}
-
-.profile-info .name {
-  font-size: 18px;
-  font-weight: bold;
-  margin: 0;
-}
-
-.profile-info .position {
-  font-size: 14px;
-  color: #777;
-  margin: 0;
-  margin-top: 4px; /* 줄 간격 추가 */
-}
-
-.bottom-left {
-  grid-area: 1 / 1 / 2 / 2;
-  border-top: 7px solid #000;
-  position: relative;
-}
-
-.todo-controls {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  display: flex;
-  align-items: center;
-}
-
-.todo-dropdown {
-  padding: 5px;
-  margin-right: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-.add-todo-button {
-  background-color: #5c3d2e;
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  font-size: 24px;
-  line-height: 24px;
-  text-align: center;
-  cursor: pointer;
-}
-
-.bottom-right {
-  grid-area: 1 / 2 / 2 / 3;
-  border-top: 7px solid #000;
-}
-
-h2, h3 {
-  margin-top: 0;
-}
-
-.bold {
-  font-weight: bold;
-}
-
-ul {
-  padding: 0;
-  list-style-type: none;
-}
-
-ul li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-ul li input[type="checkbox"] {
-  margin-right: 10px;
-}
-
-.drag-handle {
-  cursor: grab;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-table, th, td {
-  border: 1px solid black;
-  text-align: center;
-}
-
-th, td {
-  padding: 5px;
-}
-
-.team-list {
-  flex-grow: 1;
-}
-
-.member-details div {
-  line-height: 1.2;
-}
-
-#todo-list {
-  max-height: 200px; /* 원하는 높이로 설정 */
-  overflow-y: auto;
-}
-
-#notice-list {
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-/* 기존 CSS 코드들 */
-
-.drag-handle {
-  cursor: move;
-  background: none;
-  border: none;
-  font-size: 16px;
-  margin-left: 10px;
-}
+    font-family: Arial, sans-serif;
+    background-color: #FFFDD0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+  }
+  
+  .sidebar {
+    background-color: #FFFDD0;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+  }
+  
+  .sidebar .logo {
+    font-size: 36px;
+    color: #4DCADB;
+    font-weight: bold;
+    margin-bottom: 20px;
+    line-height: 0.5;
+    width: 100%;
+  }
+  
+  .sidebar .team {
+    text-align: left;
+    display: block;
+    margin-left: 20px;
+  }
+  
+  .sidebar .todo {
+    text-align: right;
+    display: block;
+    margin-right: 20px;
+  }
+  
+  .sidebar nav ul {
+    list-style-type: none;
+    padding: 0;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .sidebar nav ul li {
+    margin: 20px 0;
+  }
+  
+  .sidebar nav ul li button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+  
+  .sidebar nav ul li button img {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .help {
+    margin-bottom: 20px;
+  }
+  
+  .help button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+  
+  .help button img {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .main-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 20px;
+    width: calc(100% - 200px);
+  }
+  
+  .top-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .bottom-container {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 10px;
+    flex-grow: 1;
+  }
+  
+  .top-left, .top-right, .bottom-left, .bottom-right {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-top: 0px solid #000;
+  }
+  
+  .top-left {
+    grid-area: 1 / 1 / 2 / 2;
+    border-top: 7px solid #000;
+    position: relative;
+  }
+  
+  #calendar {
+    height: 90%;
+    width: 100%;
+    table-layout: fixed;
+  }
+  
+  .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .calendar-nav {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  
+  .calendar-nav-button {
+    background-color: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #000;
+  }
+  
+  .top-right {
+    display: grid;
+    background-color: #FFFDD0;
+    grid-template-rows: auto 1fr;
+    gap: 10px;
+    padding: 0;
+    border: none;
+  }
+  
+  .progress {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 0;
+    position: relative;
+    text-align: left;
+    border-top: 7px solid #000;
+  }
+  
+  .progress h2 {
+    margin: 0 0 10px 0;
+  }
+  
+  .progress-percent {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .progress-bar {
+    width: 100%;
+    background-color: #f3f3f3;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 20px;
+    margin: 20px 0;
+  }
+  
+  .progress-fill {
+    height: 100%;
+    width: 33%;
+    background-color: #4DCADB;
+  }
+  
+  .team-members {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 0;
+    display: flex;
+    border-top: 7px solid #000;
+  }
+  
+  .team-members .team-list {
+    flex: 1;
+    border-right: 1px solid #ccc;
+    padding-right: 5px;
+    padding-left: 10px;
+  }
+  
+  .team-members .team-list h3 {
+    margin-top: 0;
+  }
+  
+  .team-members .team-list ul {
+    padding: 0;
+    list-style-type: none;
+  }
+  
+  .team-member-item {
+    padding: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .team-member-item:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .team-members .member-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    padding-left: 15px;
+  }
+  
+  .profile-set {
+    display: none;
+    align-items: center;
+  }
+  
+  #designer-profile, #user-profile {
+    display: flex;
+  }
+  
+  .profile-pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 20px;
+  }
+  
+  .profile-info {
+    text-align: left;
+  }
+  
+  .profile-info .name {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  .profile-info .position {
+    font-size: 14px;
+    color: #777;
+    margin: 0;
+    margin-top: 4px; /* 줄 간격 추가 */
+  }
+  
+  .bottom-left {
+    grid-area: 1 / 1 / 2 / 2;
+    border-top: 7px solid #000;
+    position: relative;
+  }
+  
+  .todo-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* 수정된 부분: 오른쪽 정렬 */
+    margin-bottom: 20px;
+  }
+  
+  .todo-dropdown {
+    padding: 5px;
+    margin-right: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .add-todo-button {
+    background-color: #5c3d2e;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 24px;
+    line-height: 24px;
+    text-align: center;
+    cursor: pointer;
+  }
+  
+  .bottom-right {
+    grid-area: 1 / 2 / 2 / 3;
+    border-top: 7px solid #000;
+  }
+  
+  h2, h3 {
+    margin-top: 0;
+  }
+  
+  .bold {
+    font-weight: bold;
+  }
+  
+  ul {
+    padding: 0;
+    list-style-type: none;
+  }
+  
+  ul li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  ul li input[type="checkbox"] {
+    margin-right: 10px;
+  }
+  
+  .drag-handle {
+    cursor: grab;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  table, th, td {
+    border: 1px solid black;
+    text-align: center;
+  }
+  
+  th, td {
+    padding: 5px;
+  }
+  
+  .team-list {
+    flex-grow: 1;
+  }
+  
+  .member-details div {
+    line-height: 1.2;
+  }
+  
+  #todo-list {
+    max-height: 200px; /* 적절한 높이로 설정 */
+    overflow-y: auto;
+  }
+  
+  #notice-list {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  /* 기존 CSS 코드들 */
+  
+  .drag-handle {
+    cursor: move;
+    background: none;
+    border: none;
+    font-size: 16px;
+    margin-left: 10px;
+  }
+  

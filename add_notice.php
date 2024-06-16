@@ -16,15 +16,10 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 }
 
 $notice_content = $data['notice_content'];
-$todo_id = isset($data['todo_id']) ? $data['todo_id'] : NULL;
-$goal_id = isset($data['goal_id']) ? $data['goal_id'] : NULL;
+$todo_id = isset($data['todo_id']) ? $data['todo_id'] : null;
+$goal_id = isset($data['goal_id']) ? $data['goal_id'] : null;
 
-// 노티스 추가
-$stmt = $conn->prepare("INSERT INTO notices (notice_content, todo_id, goal_id) VALUES (?, ?, ?)");
-if (!$stmt) {
-    echo json_encode(["success" => false, "message" => "Failed to prepare query: " . $conn->error]);
-    exit;
-}
+$stmt = $conn->prepare("INSERT INTO notices (notice_content, todo_id, goal_id, created_at) VALUES (?, ?, ?, NOW())");
 $stmt->bind_param("sii", $notice_content, $todo_id, $goal_id);
 
 if ($stmt->execute()) {

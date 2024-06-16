@@ -10,7 +10,7 @@ data:
         server_name localhost;
 
         root /var/www/html;
-        index index.html index.php;
+        index login.html;
 
         location / {
             try_files $uri $uri/ =404;

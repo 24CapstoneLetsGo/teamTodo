@@ -465,14 +465,13 @@
                 if (!result.success) {
                     alert("할 일 상태 업데이트에 실패했습니다: " + result.message);
                 } else {
-                    if (isDone) {
-                        fetch('get_user_info.php')
-                            .then(response => response.json())
-                            .then(userInfo => {
-                                addNotice('task', userInfo.username, todoId, '완료하였습니다');
-                            })
-                            .catch(error => console.error('Error fetching logged in user info:', error));
-                    }
+                    fetch('get_user_info.php')
+                        .then(response => response.json())
+                        .then(userInfo => {
+                            const action = isDone ? '완료하였습니다' : '취소하였습니다';
+                            addNotice('task', userInfo.username, todoId, action);
+                        })
+                        .catch(error => console.error('Error fetching logged in user info:', error));
                     updateProgress();
                 }
             })

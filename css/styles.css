@@ -276,9 +276,11 @@ body {
 }
 
 .todo-controls {
+  position: absolute;
+  top: 20px;
+  right: 20px;
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
 }
 
 .todo-dropdown {
@@ -357,7 +359,7 @@ th, td {
 }
 
 #todo-list {
-  max-height: 100px; /* 원하는 높이로 설정 */
+  max-height: 200px; /* 원하는 높이로 설정 */
   overflow-y: auto;
 }
 

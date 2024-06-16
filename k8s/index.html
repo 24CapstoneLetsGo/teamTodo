@@ -1,42 +1,405 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="./css/login.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team ToDo App</title>
+<link rel="stylesheet" href="./css/styles.css">
 </head>
 <body>
-    <div class="login-container">
-        <h1>Welcome, We Are <span class="team-todo">"TeamToDo"</span></h1>
-        <form class="login-form" action="login.php" method="POST">
-            <div class="input-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="input-group">
-                <label for="password">PASSWORD</label>
-                <div class="password-container">
-                    <input type="password" id="password" name="password" required>
-                    <span class="password-toggle">&#128065;</span>
-                </div>
-            </div>
-            <button type="submit" class="login-button">로그인</button>
-            <p class="signup-prompt">계정이 없으신가요? <a href="signup.html">회원가입 하러가기</a></p>
-        </form>
+<div class="sidebar">
+  <div class="logo">
+    <span class="team">Team</span><br>
+    <span class="todo">ToDo</span>
+  </div>
+  <nav>
+    <ul>
+      <li><button onclick="location.href='index.html'"><img src="./images/yellowhome.png" alt="Home"></button></li>
+      <li><button onclick="location.href='edit_profile.html'"><img src="./images/blackprofile.png" alt="Profile"></button></li>
+      <li><button onclick="location.href='login.html'"><img src="./images/blacklogout.png" alt="Logout"></button></li>
+    </ul>
+  </nav>
+  <div class="help">
+    <button onclick="location.href='help.html'"><img src="./images/help.png" alt="Help"></button>
+  </div>
+</div>
+<div class="main-container">
+  <div class="top-container">
+    <div class="top-left">
+      <div class="calendar-header">
+        <button class="calendar-nav-button prev-month">&lt;</button>
+        <h2 id="calendar-month">May 2024</h2>
+        <button class="calendar-nav-button next-month">&gt;</button>
+      </div>
+      <table id="calendar">
+        <thead>
+          <tr>
+            <th>일</th>
+            <th>월</th>
+            <th>화</th>
+            <th>수</th>
+            <th>목</th>
+            <th>금</th>
+            <th>토</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- 달력 날짜가 동적으로 생성될 부분 -->
+        </tbody>
+      </table>
     </div>
-    <script>
-        // 비밀번호 토글 기능 추가
-        document.querySelectorAll('.password-toggle').forEach(toggle => {
-            toggle.addEventListener('click', function() {
-                const passwordInput = this.previousElementSibling;
-                if (passwordInput.type === 'password') {
-                    passwordInput.type = 'text';
+    <div class="top-right">
+      <div class="progress">
+        <h2>Progress</h2>
+        <div class="progress-bar">
+          <div class="progress-fill"></div>
+        </div>
+        <p class="progress-percent">33%</p>
+      </div>
+      <div class="team-members">
+        <div class="team-list">
+          <h3>Team Members</h3>
+          <ul>
+            <li class="team-member-item" data-team-id="1">Designer</li>
+            <li class="team-member-item" data-team-id="2">Front-end</li>
+            <li class="team-member-item" data-team-id="3">Back-end</li>
+            <li class="team-member-item" data-team-id="4">AI</li>
+            <li class="team-member-item" data-team-id="5">Planner</li>
+          </ul>
+        </div>
+        <div class="member-details" id="member-details"></div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-container">
+    <div class="bottom-left">
+      <h2>Team To-Do CheckList</h2>
+      <div class="todo-controls">
+        <select class="todo-dropdown">
+          <option value="task">할 일</option>
+          <option value="title">제목</option>
+        </select>
+        <input type="text" id="todo-input" placeholder="내용을 입력하세요">
+        <button class="add-todo-button">+</button>
+      </div>
+      <ul id="todo-list"></ul>
+    </div>
+    <div class="bottom-right">
+      <h2 class="bold">Notice</h2>
+      <div id="notice-list">
+        <p>신유진 님이 ToDo를 생성하였습니다.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const teamMembers = document.querySelectorAll(".team-member-item");
+    const memberDetails = document.getElementById("member-details");
+    const todoDropdown = document.querySelector(".todo-dropdown");
+    const todoInput = document.getElementById("todo-input");
+    const addTodoButton = document.querySelector(".add-todo-button");
+    const todoList = document.getElementById("todo-list");
+    const progressBar = document.querySelector(".progress-fill");
+    const progressPercent = document.querySelector(".progress-percent");
+
+    // 로그인한 사용자 정보 가져오기
+    function fetchLoggedInUser() {
+        fetch('get_user_info.php')
+            .then(response => response.json())
+            .then(userInfo => {
+                console.log("User info:", userInfo);
+                if (userInfo.error) {
+                    alert(userInfo.error);
+                    return;
+                }
+                displayUserInfo(userInfo);
+                selectTeam(userInfo.team_id); // team_id를 사용하여 팀 선택
+            })
+            .catch(error => console.error('Error fetching logged in user info:', error));
+    }
+
+    // 팀 멤버 정보 가져오기
+    function fetchUsersByTeam(team_id) {
+        fetch(`get_team_users.php?team_id=${team_id}`)
+            .then(response => response.json())
+            .then(users => {
+                console.log("Fetched users by team:", users); // 응답 데이터를 출력하여 확인
+                if (Array.isArray(users)) {
+                    displayUsers(users);
                 } else {
-                    passwordInput.type = 'password';
+                    console.error('Fetched data is not an array:', users);
+                }
+            })
+            .catch(error => console.error('Error fetching users:', error));
+    }
+
+    // 사용자 정보 표시
+    function displayUsers(users) {
+        memberDetails.innerHTML = ""; // 기존 내용을 지우고 새로 추가
+        users.forEach(user => {
+            const userProfile = document.createElement("div");
+            userProfile.classList.add("profile-set");
+            userProfile.style.display = "flex";
+            userProfile.style.marginBottom = "10px"; // 각 프로필 사이에 여백 추가
+
+            const profilePic = document.createElement("img");
+            profilePic.src = "./images/gu.png"; // 프로필 사진 경로를 실제 사진 경로로 변경
+            profilePic.alt = "Member Profile";
+            profilePic.classList.add("profile-pic");
+
+            const profileInfo = document.createElement("div");
+            profileInfo.classList.add("profile-info");
+
+            const profileName = document.createElement("p");
+            profileName.classList.add("name");
+            profileName.textContent = user.username;
+
+            const profileTeam = document.createElement("p");
+            profileTeam.classList.add("position");
+            profileTeam.textContent = `${user.group_name} / ${user.team_name}`;
+
+            profileInfo.appendChild(profileName);
+            profileInfo.appendChild(profileTeam);
+            userProfile.appendChild(profilePic);
+            userProfile.appendChild(profileInfo);
+
+            memberDetails.appendChild(userProfile);
+        });
+    }
+
+    // 로그인한 사용자 정보 표시
+    function displayUserInfo(userInfo) {
+        memberDetails.innerHTML = ""; // 기존 내용을 지우고 새로 추가
+        const userProfile = document.createElement("div");
+        userProfile.classList.add("profile-set");
+        userProfile.style.display = "flex";
+        userProfile.style.marginBottom = "10px"; // 각 프로필 사이에 여백 추가
+
+        const profilePic = document.createElement("img");
+        profilePic.src = "./images/gu.png"; // 프로필 사진 경로를 실제 사진 경로로 변경
+        profilePic.alt = "Member Profile";
+        profilePic.classList.add("profile-pic");
+
+        const profileInfo = document.createElement("div");
+        profileInfo.classList.add("profile-info");
+
+        const profileName = document.createElement("p");
+        profileName.classList.add("name");
+        profileName.textContent = userInfo.username;
+
+        const profileTeam = document.createElement("p");
+        profileTeam.classList.add("position");
+        profileTeam.textContent = `${userInfo.group_name} / ${userInfo.team_name}`;
+
+        profileInfo.appendChild(profileName);
+        profileInfo.appendChild(profileTeam);
+        userProfile.appendChild(profilePic);
+        userProfile.appendChild(profileInfo);
+
+        memberDetails.appendChild(userProfile);
+    }
+
+    // 팀 선택 표시 및 팀 멤버 정보 가져오기
+    function selectTeam(team_id) {
+        const selectedTeam = document.querySelector(`.team-member-item[data-team-id='${team_id}']`);
+        if (selectedTeam) {
+            // 모든 팀 멤버 아이템에서 'selected' 클래스 제거
+            teamMembers.forEach(function (member) {
+                member.classList.remove("selected");
+            });
+
+            // 선택된 팀 멤버 아이템에 'selected' 클래스 추가
+            selectedTeam.classList.add("selected");
+            fetchUsersByTeam(team_id); // 팀 멤버 정보 가져오기
+        }
+    }
+
+    // 팀 멤버 클릭 이벤트 설정
+    teamMembers.forEach(function (member) {
+        member.addEventListener("click", function () {
+            const team_id = this.getAttribute("data-team-id");
+            selectTeam(team_id);
+        });
+    });
+
+    // 로그인한 사용자 정보 가져오기
+    fetchLoggedInUser();
+
+    // 오늘 날짜 배경색 변경
+    const today = new Date();
+    let currentMonth = today.getMonth();
+    let currentYear = today.getFullYear();
+
+    function generateCalendar(month, year) {
+        const calendar = document.querySelector("#calendar tbody");
+        calendar.innerHTML = "";
+        const monthAndYear = document.getElementById("calendar-month");
+        const firstDay = new Date(year, month).getDay();
+        const daysInMonth = 32 - new Date(year, month, 32).getDate();
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        monthAndYear.textContent = `${months[month]} ${year}`;
+
+        let date = 1;
+        for (let i = 0; i < 6; i++) {
+            const row = document.createElement("tr");
+            for (let j = 0; j < 7; j++) {
+                if (i === 0 && j < firstDay) {
+                    const cell = document.createElement("td");
+                    row.appendChild(cell);
+                } else if (date > daysInMonth) {
+                    break;
+                } else {
+                    const cell = document.createElement("td");
+                    cell.textContent = date;
+                    if (date === today.getDate() && year === today.getFullYear() && month === today.getMonth()) {
+                        cell.style.backgroundColor = "#C6E4FF";
+                    }
+                    row.appendChild(cell);
+                    date++;
+                }
+            }
+            calendar.appendChild(row);
+        }
+    }
+
+    document.querySelector(".prev-month").addEventListener("click", function () {
+        currentMonth = (currentMonth === 0) ? 11 : currentMonth - 1;
+        currentYear = (currentMonth === 11) ? currentYear - 1 : currentYear;
+        generateCalendar(currentMonth, currentYear);
+    });
+
+    document.querySelector(".next-month").addEventListener("click", function () {
+        currentMonth = (currentMonth === 11) ? 0 : currentMonth + 1;
+        currentYear = (currentMonth === 0) ? currentYear + 1 : currentYear;
+        generateCalendar(currentMonth, currentYear);
+    });
+
+    generateCalendar(currentMonth, currentYear);
+
+    // 기존 투두리스트 항목 로드
+    function loadTodos() {
+        fetch('load_todos.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                displayTodos(data);
+            })
+            .catch(error => console.error('Error loading todos:', error));
+    }
+
+    function displayTodos(data) {
+        const { goals, todos } = data;
+        goals.forEach(goal => {
+            addTodoToList("title", goal.goal_name);
+        });
+        todos.forEach(todo => {
+            addTodoToList("task", todo.todo_content, todo.is_done);
+        });
+    }
+
+    // 투두리스트 항목 추가
+    addTodoButton.addEventListener("click", function () {
+        const todoType = todoDropdown.value;
+        const todoContent = todoInput.value.trim();
+        if (todoContent === "") {
+            alert("내용을 입력하세요.");
+            return;
+        }
+        console.log("Adding todo:", { type: todoType, content: todoContent });
+
+        // 서버에 투두리스트 항목 추가 요청
+        fetch('add_todo.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ type: todoType, content: todoContent })
+        })
+        .then(response => {
+            console.log("Server response:", response);
+            return response.text().then(text => {
+                console.log("Response text:", text);
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    throw new Error('Invalid JSON: ' + text);
                 }
             });
-        });
-    </script>
+        })
+        .then(result => {
+            console.log("Parsed response:", result);
+            if (result.success) {
+                addTodoToList(todoType, todoContent);
+                todoInput.value = ""; // 입력 필드 초기화
+            } else {
+                alert("투두리스트 항목 추가에 실패했습니다: " + result.message);
+            }
+        })
+        .catch(error => console.error('Error adding todo:', error));
+    });
+
+    function addTodoToList(type, content, isDone = 0) {
+        const li = document.createElement("li");
+        const contentDiv = document.createElement("div");
+        contentDiv.className = "content";
+
+        if (type === "title") {
+            const span = document.createElement("span");
+            span.classList.add("content", "bold");
+            span.textContent = content;
+            li.appendChild(span);
+        } else {
+            const span = document.createElement("span");
+            span.classList.add("content");
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = isDone;
+            span.appendChild(checkbox);
+            span.appendChild(document.createTextNode(content));
+            li.appendChild(span);
+
+            // 체크박스 상태 변경 시 진행률 업데이트
+            checkbox.addEventListener("change", updateProgress);
+        }
+
+        const dragButton = document.createElement("button");
+        dragButton.classList.add("drag-handle");
+        dragButton.textContent = "☰";
+        li.appendChild(contentDiv);
+        li.appendChild(dragButton);
+        todoList.appendChild(li);
+
+        // 진행률 업데이트
+        updateProgress();
+    }
+
+    function updateProgress() {
+        const checkboxes = todoList.querySelectorAll("input[type='checkbox']");
+        const checked = todoList.querySelectorAll("input[type='checkbox']:checked");
+        const totalTasks = checkboxes.length;
+        const completedTasks = checked.length;
+        const progress = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
+
+        progressBar.style.width = `${progress}%`;
+        progressPercent.textContent = `${progress}%`;
+    }
+
+    // 기존 투두리스트 항목 로드
+    loadTodos();
+
+    // SortableJS를 이용한 드래그 앤 드롭 기능 활성화
+    new Sortable(todoList, {
+        handle: '.drag-handle',
+        animation: 150,
+        draggable: 'li',
+    });
+});
+</script>
 </body>
 </html>
+

@@ -358,12 +358,12 @@ body {
   }
   
   #todo-list {
-    max-height: 200px; /* 적절한 높이로 설정 */
+    max-height: 190px; /* 적절한 높이로 설정 */
     overflow-y: auto;
   }
   
   #notice-list {
-    max-height: 200px;
+    max-height: 190px;
     overflow-y: auto;
   }
   

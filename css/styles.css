@@ -385,3 +385,21 @@ body {
     margin-left: 10px;
   }
   
+  .notice-message {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.notice-text {
+    text-align: left;
+    flex: 1;
+}
+
+.notice-time {
+    text-align: right;
+    flex: 0 0 auto;
+    color: #777;
+    margin-left: 10px;
+}

@@ -28,7 +28,7 @@ $team_id = $user['team_id'];
 
 // 해당 팀 아이디의 모든 노티스 가져오기
 $sql = "
-    SELECT n.notice_content 
+    SELECT n.notice_content, n.created_at
     FROM notices n
     LEFT JOIN todo t ON n.todo_id = t.todo_id
     LEFT JOIN goals g ON n.goal_id = g.goal_id
@@ -41,7 +41,7 @@ $result = $stmt->get_result();
 
 $notices = [];
 while ($row = $result->fetch_assoc()) {
-    $notices[] = $row['notice_content'];
+    $notices[] = ['content' => $row['notice_content'], 'time' => substr($row['created_at'], 11, 5)];
 }
 
 echo json_encode(["notices" => $notices]);

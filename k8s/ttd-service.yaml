@@ -14,14 +14,28 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: web-service
+  name: nginx-service
   namespace: ttd
 spec:
   selector:
-    app: web
-  type: NodePort
+    app: nginx
   ports:
     - protocol: TCP
       port: 80
       targetPort: 80
-      nodePort: 30080
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: php-service
+  namespace: ttd
+spec:
+  selector:
+    app: php
+  ports:
+    - protocol: TCP
+      port: 9000
+      targetPort: 9000
+
+

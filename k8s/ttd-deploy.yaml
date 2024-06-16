@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: web-deployment
+  name: nginx-deployment
   namespace: ttd
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: web
+      app: nginx
   template:
     metadata:
       labels:
-        app: web
+        app: nginx
     spec:
       containers:
       - name: nginx-container
@@ -21,6 +21,27 @@ spec:
         volumeMounts:
         - name: web-files
           mountPath: /var/www/html
+      volumes:
+      - name: web-files
+        configMap:
+          name: web-files
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-deployment
+  namespace: ttd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: php
+  template:
+    metadata:
+      labels:
+        app: php
+    spec:
+      containers:
       - name: php-container
         image: zox2m/php:8.2
         ports:
@@ -39,10 +60,10 @@ metadata:
   name: mysql-deployment
   namespace: ttd
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: mysql
-  replicas: 1
   template:
     metadata:
       labels:
@@ -69,9 +90,9 @@ spec:
         ports:
         - containerPort: 3306
         volumeMounts:
-        - name: mysql-persistent-storage
+        - name: mysql-storage
           mountPath: /var/lib/mysql
       volumes:
-      - name: mysql-persistent-storage
+      - name: mysql-storage
         persistentVolumeClaim:
           claimName: mysql-pvc

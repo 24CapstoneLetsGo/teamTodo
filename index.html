@@ -299,7 +299,7 @@ document.addEventListener("DOMContentLoaded", function () {
             addTodoToList("title", goal.goal_name);
         });
         todos.forEach(todo => {
-            addTodoToList("task", todo.todo_content, todo.is_done);
+            addTodoToList("task", todo.todo_content, todo.is_done, todo.todo_id);
         });
     }
 
@@ -325,7 +325,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(result => {
             console.log("Parsed response:", result);
             if (result.success) {
-                addTodoToList(todoType, todoContent);
+                addTodoToList(todoType, todoContent, 0, result.todo_id);
                 todoInput.value = ""; // 입력 필드 초기화
                 addNotice(todoType, todoContent, result.username); // 알림 추가
             } else {
@@ -335,7 +335,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(error => console.error('Error adding todo:', error));
     });
 
-    function addTodoToList(type, content, isDone = 0) {
+    function addTodoToList(type, content, isDone = 0, todoId = null) {
         const li = document.createElement("li");
         const contentDiv = document.createElement("div");
         contentDiv.className = "content";
@@ -351,12 +351,12 @@ document.addEventListener("DOMContentLoaded", function () {
             const checkbox = document.createElement("input");
             checkbox.type = "checkbox";
             checkbox.checked = isDone;
+            checkbox.addEventListener("change", function () {
+                updateTodoStatus(todoId, checkbox.checked);
+            });
             span.appendChild(checkbox);
             span.appendChild(document.createTextNode(content));
             li.appendChild(span);
-
-            // 체크박스 상태 변경 시 진행률 업데이트
-            checkbox.addEventListener("change", updateProgress);
         }
 
         const dragButton = document.createElement("button");
@@ -378,6 +378,26 @@ document.addEventListener("DOMContentLoaded", function () {
             noticeMessage.textContent = `${username} 님이 Todo 를 생성하였습니다.`;
         }
         noticeList.appendChild(noticeMessage);
+    }
+
+    function updateTodoStatus(todoId, isDone) {
+        fetch('update_todo.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id: todoId, is_done: isDone ? 1 : 0 })
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (!result.success) {
+                alert("할 일 상태 업데이트에 실패했습니다: " + result.message);
+            } else {
+                // 상태가 업데이트된 후 진행률 다시 계산
+                updateProgress();
+            }
+        })
+        .catch(error => console.error('Error updating todo status:', error));
     }
 
     function updateProgress() {
@@ -402,5 +422,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
+</body>
+</html>
+
 </body>
 </html>

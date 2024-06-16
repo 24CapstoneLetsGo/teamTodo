@@ -103,7 +103,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const todoList = document.getElementById("todo-list");
     const progressBar = document.querySelector(".progress-fill");
     const progressPercent = document.querySelector(".progress-percent");
-    const noticeList = document.getElementById("notice-list");
 
     // 로그인한 사용자 정보 가져오기
     function fetchLoggedInUser() {
@@ -321,13 +320,22 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             body: JSON.stringify({ type: todoType, content: todoContent })
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log("Server response:", response);
+            return response.text().then(text => {
+                console.log("Response text:", text);
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    throw new Error('Invalid JSON: ' + text);
+                }
+            });
+        })
         .then(result => {
             console.log("Parsed response:", result);
             if (result.success) {
                 addTodoToList(todoType, todoContent);
                 todoInput.value = ""; // 입력 필드 초기화
-                addNotice(todoType, todoContent, result.username); // 알림 추가
             } else {
                 alert("투두리스트 항목 추가에 실패했습니다: " + result.message);
             }
@@ -370,16 +378,6 @@ document.addEventListener("DOMContentLoaded", function () {
         updateProgress();
     }
 
-    function addNotice(type, content, username) {
-        const noticeMessage = document.createElement("p");
-        if (type === "title") {
-            noticeMessage.textContent = `${username} 님이 Goal 을 생성하였습니다.`;
-        } else {
-            noticeMessage.textContent = `${username} 님이 Todo 를 생성하였습니다.`;
-        }
-        noticeList.appendChild(noticeMessage);
-    }
-
     function updateProgress() {
         const checkboxes = todoList.querySelectorAll("input[type='checkbox']");
         const checked = todoList.querySelectorAll("input[type='checkbox']:checked");
@@ -404,3 +402,4 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 </body>
 </html>
+

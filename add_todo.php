@@ -17,7 +17,7 @@ if (!isset($_SESSION['email'])) {
 $email = $_SESSION['email'];
 
 // 사용자 정보 가져오기
-$user_stmt = $conn->prepare("SELECT team_id FROM users WHERE email = ?");
+$user_stmt = $conn->prepare("SELECT username, team_id FROM users WHERE email = ?");
 if (!$user_stmt) {
     error_log("Failed to prepare user query: " . $conn->error);
     echo json_encode(["success" => false, "message" => "Failed to prepare user query: " . $conn->error]);
@@ -36,6 +36,7 @@ if (!$user_result) {
     exit;
 }
 $user = $user_result->fetch_assoc();
+$username = $user['username'];
 $team_id = $user['team_id'];
 
 $data = json_decode(file_get_contents('php://input'), true);
@@ -73,7 +74,7 @@ if ($type === 'title') {
 }
 
 if ($stmt->execute()) {
-    echo json_encode(["success" => true]);
+    echo json_encode(["success" => true, "username" => $username]);
 } else {
     error_log("Failed to add todo: " . $stmt->error);
     echo json_encode(["success" => false, "message" => "Failed to add todo: " . $stmt->error]);
@@ -82,4 +83,3 @@ if ($stmt->execute()) {
 $stmt->close();
 $conn->close();
 ?>
-

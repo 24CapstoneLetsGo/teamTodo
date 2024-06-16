@@ -294,10 +294,32 @@ document.addEventListener("DOMContentLoaded", function () {
     function displayTodos(data) {
         const { goals, todos } = data;
         goals.forEach(goal => {
-            addTodoToList("title", goal.goal_name);
+            addTodoToList("title", goal.goal_name, 0, null, goal.goal_id);
         });
         todos.forEach(todo => {
-            addTodoToList("task", todo.todo_content, todo.is_done, todo.todo_id);
+            addTodoToList("task", todo.todo_content, todo.is_done, todo.todo_id, null);
+        });
+    }
+
+    // 기존 노티스 항목 로드
+    function loadNotices() {
+        fetch('load_notices.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                displayNotices(data.notices);
+            })
+            .catch(error => console.error('Error loading notices:', error));
+    }
+
+    function displayNotices(notices) {
+        notices.forEach(notice => {
+            const noticeMessage = document.createElement("p");
+            noticeMessage.textContent = notice;
+            noticeList.appendChild(noticeMessage);
         });
     }
 
@@ -325,7 +347,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (result.success) {
                 addTodoToList(todoType, todoContent, 0, result.todo_id);
                 todoInput.value = ""; // 입력 필드 초기화
-                addNotice(todoType, result.username); // 알림 추가
+                addNotice(todoType, result.username, result.todo_id); // 알림 추가
             } else {
                 alert("투두리스트 항목 추가에 실패했습니다: " + result.message);
             }
@@ -333,7 +355,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(error => console.error('Error adding todo:', error));
     });
 
-    function addTodoToList(type, content, isDone = 0, todoId = null) {
+    function addTodoToList(type, content, isDone = 0, todoId = null, goalId = null) {
         const li = document.createElement("li");
         const contentDiv = document.createElement("div");
         contentDiv.className = "content";
@@ -368,14 +390,32 @@ document.addEventListener("DOMContentLoaded", function () {
         updateProgress();
     }
 
-    function addNotice(type, username) {
+    function addNotice(type, username, id) {
         const noticeMessage = document.createElement("p");
+        let noticeContent = "";
         if (type === "title") {
-            noticeMessage.textContent = `${username} 님이 Goal 을 생성하였습니다.`;
+            noticeContent = `${username} 님이 Goal 을 생성하였습니다.`;
         } else {
-            noticeMessage.textContent = `${username} 님이 Todo 를 생성하였습니다.`;
+            noticeContent = `${username} 님이 Todo 를 생성하였습니다.`;
         }
+        noticeMessage.textContent = noticeContent;
         noticeList.appendChild(noticeMessage);
+
+        // 서버에 노티스 추가 요청
+        fetch('add_notice.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ notice_content: noticeContent, todo_id: type === "task" ? id : null, goal_id: type === "title" ? id : null })
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (!result.success) {
+                alert("노티스 추가에 실패했습니다: " + result.message);
+            }
+        })
+        .catch(error => console.error('Error adding notice:', error));
     }
 
     function updateTodoStatus(todoId, isDone) {
@@ -411,6 +451,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 기존 투두리스트 항목 로드
     loadTodos();
+    // 기존 노티스 항목 로드
+    loadNotices();
 
     // SortableJS를 이용한 드래그 앤 드롭 기능 활성화
     new Sortable(todoList, {

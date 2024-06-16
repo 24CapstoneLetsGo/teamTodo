@@ -54,3 +54,13 @@ CREATE TABLE IF NOT EXISTS todo (
     FOREIGN KEY (email) REFERENCES users(email)
 );
 
+-- 노티스 테이블 생성
+CREATE TABLE IF NOT EXISTS notices (
+    notice_id INT AUTO_INCREMENT PRIMARY KEY,
+    notice_content TEXT NOT NULL,
+    todo_id INT,
+    goal_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (todo_id) REFERENCES todo(todo_id),
+    FOREIGN KEY (goal_id) REFERENCES goals(goal_id)
+);

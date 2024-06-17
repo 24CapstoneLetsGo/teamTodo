@@ -4,7 +4,7 @@ metadata:
   name: nginx-deployment
   namespace: ttd
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: nginx
@@ -21,6 +21,13 @@ spec:
         volumeMounts:
         - name: web-files
           mountPath: /var/www/html
+        resources: 
+          requests:
+            cpu: "100m"
+            memory: 128Mi
+          limits:
+            cpu: "500m"
+            memory: 256Mi
       volumes:
       - name: web-files
         configMap:
@@ -32,7 +39,7 @@ metadata:
   name: php-deployment
   namespace: ttd
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: php
@@ -60,7 +67,7 @@ metadata:
   name: mysql-deployment
   namespace: ttd
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: mysql

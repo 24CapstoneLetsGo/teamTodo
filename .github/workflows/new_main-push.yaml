@@ -39,6 +39,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y conntrack
 
+          # Install crictl
+          sudo curl -Lo /usr/local/bin/crictl https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.22.0/crictl-v1.22.0-linux-amd64.tar.gz
+          sudo chmod +x /usr/local/bin/crictl
+
       - name: Install kubectl
         run: |
           curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"

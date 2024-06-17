@@ -34,9 +34,18 @@ jobs:
           docker build -t zox2m/mysql:8.0 ./sql
           docker push zox2m/mysql:8.0
 
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v1
+        with:
+          version: '1.21.0'
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+          kubectl config set-context --current --namespace=default
+
       - name: Update Kubernetes Deployment
         if: github.ref == 'refs/heads/new_main'
-        env:
-          KUBECONFIG: ${{ secrets.KUBE_CONFIG }}
         run: |
           kubectl apply -f k8s/ttd-deploy.yaml -n ttd

@@ -44,9 +44,16 @@ jobs:
         run: |
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
-          kubectl config set-context --current --namespace=default
+          echo "${{ secrets.MINIKUBE_CA_CERT }}" > $HOME/.kube/ca.crt
+          echo "${{ secrets.MINIKUBE_CLIENT_CERT }}" > $HOME/.kube/client.crt
+          echo "${{ secrets.MINIKUBE_CLIENT_KEY }}" > $HOME/.kube/client.key
+
+          sed -i 's|/home/ubuntu/.minikube/ca.crt|'"$HOME"'/.kube/ca.crt|g' $HOME/.kube/config
+          sed -i 's|/home/ubuntu/.minikube/profiles/minikube/client.crt|'"$HOME"'/.kube/client.crt|g' $HOME/.kube/config
+          sed -i 's|/home/ubuntu/.minikube/profiles/minikube/client.key|'"$HOME"'/.kube/client.key|g' $HOME/.kube/config
 
       - name: Update Kubernetes Deployment
         if: github.ref == 'refs/heads/new_main'
         run: |
           kubectl apply -f k8s/ttd-deploy.yaml -n ttd
+          kubectl rollout restart deployment/nginx-deployment -n ttd

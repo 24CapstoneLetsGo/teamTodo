@@ -34,10 +34,11 @@ jobs:
           docker build -t zox2m/mysql:8.0 ./sql
           docker push zox2m/mysql:8.0
 
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v1
-        with:
-          version: '1.21.0'
+      - name: Install kubectl
+        run: |
+          curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x ./kubectl
+          sudo mv ./kubectl /usr/local/bin/kubectl
 
       - name: Configure kubectl
         run: |

@@ -362,6 +362,7 @@ document.addEventListener("DOMContentLoaded", function () {
         updateProgress();
     }
 
+
     function loadNotices() {
         fetch('load_notices.php')
             .then(response => response.json())
@@ -491,6 +492,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (result.success) {
                 todoItem.remove();
                 updateProgress();
+                addNotice(todoType, "삭제", todoId); // 삭제된 항목에 대한 노티스 추가
             } else {
                 alert("투두 삭제에 실패했습니다: " + result.message);
             }

@@ -16,6 +16,12 @@ jobs:
       - name: Log in to Docker Hub
         run: echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
+      - name: Build and Push Nginx Docker Image
+        if: github.ref == 'refs/heads/new_main'
+        run: |
+          docker build -t zox2m/nginx:latest ./nginx
+          docker push zox2m/nginx:latest
+
       - name: Set up Kubernetes environment variables
         env:
           KUBE_SERVER: ${{ secrets.KUBE_SERVER }}
@@ -27,23 +33,7 @@ jobs:
           kubectl config set-context my-context --cluster=my-cluster --user=my-user
           kubectl config use-context my-context
 
-      - name: Build and Push Nginx Docker Image
+      - name: Deploy to Kubernetes
         if: github.ref == 'refs/heads/new_main'
         run: |
-          docker build -t zox2m/nginx:latest ./nginx
-          docker push zox2m/nginx:latest
-          kubectl apply -f k8s/ttd-deploy.yaml -n ttd
-
-      - name: Build and Push PHP Docker Image
-        if: github.ref == 'refs/heads/new_main'
-        run: |
-          docker build -t zox2m/php:8.2 ./php
-          docker push zox2m/php:8.2
-          kubectl apply -f k8s/ttd-deploy.yaml -n ttd
-
-      - name: Build and Push MySQL Docker Image
-        if: github.ref == 'refs/heads/new_main'
-        run: |
-          docker build -t zox2m/mysql:8.0 ./sql
-          docker push zox2m/mysql:8.0
           kubectl apply -f k8s/ttd-deploy.yaml -n ttd

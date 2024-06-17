@@ -66,14 +66,9 @@ jobs:
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/
 
-      - name: Install cri-dockerd
+      - name: Start Minikube with containerd runtime
         run: |
-          sudo curl -Lo /usr/local/bin/cri-dockerd https://github.com/Mirantis/cri-dockerd/releases/download/v1.2.0/cri-dockerd-v1.2.0-linux-amd64
-          sudo chmod +x /usr/local/bin/cri-dockerd
-
-      - name: Start Minikube with cri-dockerd runtime
-        run: |
-          sudo minikube start --driver=none --kubernetes-version=v1.30.0 --container-runtime=cri-dockerd
+          sudo minikube start --driver=none --kubernetes-version=v1.30.0 --container-runtime=containerd
           sudo minikube update-context
 
       - name: Configure kubectl

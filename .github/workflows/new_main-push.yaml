@@ -13,12 +13,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Log in to Docker Hub
-        env:
-          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-          DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-        run: echo $DOCKER_HUB_ACCESS_TOKEN | docker login -u $DOCKER_HUB_USERNAME --password-stdin
-
       - name: Build and Push Nginx Docker Image
         if: github.ref == 'refs/heads/new_main'
         run: |

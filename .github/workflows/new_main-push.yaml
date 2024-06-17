@@ -1,5 +1,4 @@
-
-name: Deploy on New Main Branch Push
+name: Deploy on Main Branch Push
 
 on:
   push:
@@ -11,29 +10,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-  
-    - name: Log in to Docker Hub
-      run: echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-  
-    - name: Build and Push Nginx Docker Image
-      if: github.ref == 'refs/heads/new_main'
-      run: |
-        docker build -t zox2m/nginx:latest ./nginx
-        docker push zox2m/nginx:latest
-        kubectl rollout restart deployment/nginx-deployment -n ttd
-  
-    - name: Build and Push PHP Docker Image
-      if: github.ref == 'refs/heads/new_main'
-      run: |
-        docker build -t zox2m/php:8.2 ./php
-        docker push zox2m/php:8.2
-        kubectl rollout restart deployment/php-deployment -n ttd
-  
-    - name: Build and Push MySQL Docker Image
-      if: github.ref == 'refs/heads/new_main'
-      run: |
-        docker build -t zox2m/mysql:8.0 ./sql
-        docker push zox2m/mysql:8.0
-        kubectl rollout restart deployment/mysql-deployment -n ttd
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        run: echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      - name: Build and Push Nginx Docker Image
+        if: github.ref == 'refs/heads/new_main'
+        run: |
+          docker build -t zox2m/nginx:latest ./nginx
+          docker push zox2m/nginx:latest
+
+      - name: Build and Push PHP Docker Image
+        if: github.ref == 'refs/heads/new_main'
+        run: |
+          docker build -t zox2m/php:8.2 ./php
+          docker push zox2m/php:8.2
+
+      - name: Build and Push MySQL Docker Image
+        if: github.ref == 'refs/heads/new_main'
+        run: |
+          docker build -t zox2m/mysql:8.0 ./sql
+          docker push zox2m/mysql:8.0
+
+      - name: Update Kubernetes Deployment
+        if: github.ref == 'refs/heads/new_main'
+        env:
+          KUBECONFIG: ${{ secrets.KUBE_CONFIG }}
+        run: |
+          kubectl apply -f k8s/ttd-deploy.yaml -n ttd

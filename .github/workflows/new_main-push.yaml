@@ -1,4 +1,4 @@
-name: 메인 브랜치 푸시 시 배포하기
+name: Deploy on Main Branch Push
 
 on:
   push:
@@ -10,33 +10,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 저장소 체크아웃
+      - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Docker Hub에 로그인
+      - name: Log in to Docker Hub
         run: echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-      - name: kubectl 설정하기
+      - name: Set up Kubernetes environment variables
         env:
-          KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
+          KUBE_SERVER: ${{ secrets.KUBE_SERVER }}
+          KUBE_TOKEN: ${{ secrets.KUBE_TOKEN }}
+          KUBE_CA: ${{ secrets.KUBE_CA }}
         run: |
-          echo "${{ secrets.KUBE_CONFIG }}" > ${{ github.workspace }}/kubeconfig.yaml
+          kubectl config set-cluster my-cluster --server=$KUBE_SERVER --certificate-authority=<(echo "$KUBE_CA") --embed-certs=true
+          kubectl config set-credentials my-user --token=$KUBE_TOKEN
+          kubectl config set-context my-context --cluster=my-cluster --user=my-user
+          kubectl config use-context my-context
 
-      - name: Nginx Docker 이미지 빌드 및 푸시
+      - name: Build and Push Nginx Docker Image
         if: github.ref == 'refs/heads/new_main'
         run: |
           docker build -t zox2m/nginx:latest ./nginx
           docker push zox2m/nginx:latest
           kubectl apply -f k8s/ttd-deploy.yaml -n ttd
 
-      - name: PHP Docker 이미지 빌드 및 푸시
+      - name: Build and Push PHP Docker Image
         if: github.ref == 'refs/heads/new_main'
         run: |
           docker build -t zox2m/php:8.2 ./php
           docker push zox2m/php:8.2
           kubectl apply -f k8s/ttd-deploy.yaml -n ttd
 
-      - name: MySQL Docker 이미지 빌드 및 푸시
+      - name: Build and Push MySQL Docker Image
         if: github.ref == 'refs/heads/new_main'
         run: |
           docker build -t zox2m/mysql:8.0 ./sql

@@ -66,9 +66,15 @@ jobs:
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/
 
-      - name: Start Minikube with containerd runtime
+      - name: Install containernetworking-plugins for Minikube none driver
         run: |
-          sudo minikube start --driver=none --kubernetes-version=v1.30.0 --container-runtime=containerd
+          curl -Lo /tmp/cni-plugins.tgz https://github.com/containernetworking/plugins/releases/download/v0.9.1/cni-plugins-linux-amd64-v0.9.1.tgz
+          sudo mkdir -p /opt/cni/bin
+          sudo tar -C /opt/cni/bin -xzf /tmp/cni-plugins.tgz
+
+      - name: Start Minikube with containerd runtime and specify CNI plugin directory
+        run: |
+          sudo minikube start --driver=none --kubernetes-version=v1.30.0 --container-runtime=containerd --extra-config=kubeadm.ignore-preflight-errors=CRI --extra-config=kubelet.network-plugin=cni --extra-config=kubelet.cni-bin-dir=/opt/cni/bin
           sudo minikube update-context
 
       - name: Configure kubectl

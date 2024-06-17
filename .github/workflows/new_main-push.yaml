@@ -7,15 +7,6 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latesname: Deploy on Main Branch Push
-
-on:
-  push:
-    branches:
-      - new_main
-
-jobs:
-  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -64,77 +55,6 @@ jobs:
           sudo chmod +x minikube
           sudo mv minikube /usr/local/bin/
           sudo minikube start --driver=none --kubernetes-version=v1.30.0 --container-runtime=docker
-          sudo minikube update-context
-
-      - name: Configure kubectl
-        run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
-          echo "${{ secrets.MINIKUBE_CA_CERT }}" > $HOME/.kube/ca.crt
-          echo "${{ secrets.MINIKUBE_CLIENT_CERT }}" > $HOME/.kube/client.crt
-          echo "${{ secrets.MINIKUBE_CLIENT_KEY }}" > $HOME/.kube/client.key
-
-          sed -i 's|/home/ubuntu/.minikube/ca.crt|'"$HOME"'/.kube/ca.crt|g' $HOME/.kube/config
-          sed -i 's|/home/ubuntu/.minikube/profiles/minikube/client.crt|'"$HOME"'/.kube/client.crt|g' $HOME/.kube/config
-          sed -i 's|/home/ubuntu/.minikube/profiles/minikube/client.key|'"$HOME"'/.kube/client.key|g' $HOME/.kube/config
-
-      - name: Update Kubernetes Deployment
-        if: github.ref == 'refs/heads/new_main'
-        run: |
-          kubectl apply -f k8s/ttd-deploy.yaml -n ttd
-          kubectl rollout restart deployment/nginx-deployment -n ttd
-
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Log in to Docker Hub
-        run: echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-
-      - name: Build and Push Nginx Docker Image
-        if: github.ref == 'refs/heads/new_main'
-        run: |
-          docker build -t zox2m/nginx:latest ./nginx
-          docker push zox2m/nginx:latest
-
-      - name: Build and Push PHP Docker Image
-        if: github.ref == 'refs/heads/new_main'
-        run: |
-          docker build -t zox2m/php:8.2 ./php
-          docker push zox2m/php:8.2
-
-      - name: Build and Push MySQL Docker Image
-        if: github.ref == 'refs/heads/new_main'
-        run: |
-          docker build -t zox2m/mysql:8.0 ./sql
-          docker push zox2m/mysql:8.0
-
-      - name: Install Minikube dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y conntrack
-
-          # Install crictl
-          sudo curl -Lo /usr/local/bin/crictl https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.22.0/crictl-v1.22.0-linux-amd64.tar.gz
-          sudo chmod +x /usr/local/bin/crictl
-
-          # Install cri-dockerd
-          sudo curl -Lo /usr/local/bin/cri-dockerd https://github.com/Mirantis/cri-dockerd/releases/download/v1.2.0/cri-dockerd-v1.2.0-linux-amd64
-          sudo chmod +x /usr/local/bin/cri-dockerd
-
-      - name: Install kubectl
-        run: |
-          curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
-          chmod +x kubectl
-          sudo mv kubectl /usr/local/bin/
-
-      - name: Start Minikube with cri-dockerd runtime
-        run: |
-          sudo curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-          sudo chmod +x minikube
-          sudo mv minikube /usr/local/bin/
-          sudo minikube start --driver=none --kubernetes-version=v1.30.0 --container-runtime=cri-dockerd
           sudo minikube update-context
 
       - name: Configure kubectl

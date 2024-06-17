@@ -66,9 +66,9 @@ jobs:
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/
 
-      - name: Start Minikube with Docker runtime
+      - name: Start Minikube with Docker driver using --force
         run: |
-          sudo minikube start --driver=docker --kubernetes-version=v1.30.0
+          sudo minikube start --driver=docker --kubernetes-version=v1.30.0 --force
           sudo minikube update-context
 
       - name: Configure kubectl

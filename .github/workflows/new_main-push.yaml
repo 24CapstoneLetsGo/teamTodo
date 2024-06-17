@@ -1,49 +1,87 @@
-name: CI/CD for TeamToDo
+name: Deploy on Main Branch Push
 
 on:
   push:
     branches:
-      - main
+      - new_main
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build and push Docker image
-      run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/teamtodo:latest .
-        docker push ${{ secrets.DOCKER_USERNAME }}/teamtodo:latest
+      - name: Determine files changed
+        id: files_changed
+        run: |
+          echo "::set-output name=nginx::$(git diff --name-only HEAD~1 HEAD | grep -E '^nginx/.*\.conf$')"
+          echo "::set-output name=php::$(git diff --name-only HEAD~1 HEAD | grep -E '^php/' | grep -E '\.php$')"
+          echo "::set-output name=mysql::$(git diff --name-only HEAD~1 HEAD | grep -E '^sql/' | grep -E '\.sql$')"
 
-    - name: Set up Minikube
-      run: |
-        curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-        sudo install minikube-linux-amd64 /usr/local/bin/minikube
-        curl -LO https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl
-        sudo install kubectl /usr/local/bin/kubectl
-        sudo minikube start --driver=docker
+      - name: Build and Push Nginx Docker Image
+        if: steps.files_changed.outputs.nginx
+        run: |
+          docker build -t zox2m/nginx:latest ./nginx
+          docker push zox2m/nginx:latest
+          kubectl rollout restart deployment/nginx-deployment -n ttd
 
-    - name: Deploy to Kubernetes
-      run: |
-        kubectl create deployment teamtodo --image=${{ secrets.DOCKER_USERNAME }}/teamtodo:latest
-        kubectl expose deployment teamtodo --type=LoadBalancer --port=80 --target-port=8080
+      - name: Build and Push PHP Docker Image
+        if: steps.files_changed.outputs.php
+        run: |
+          docker build -t zox2m/php:8.2 ./php
+          docker push zox2m/php:8.2
+          kubectl rollout restart deployment/php-deployment -n ttd
 
-    - name: Wait for deployment
-      run: |
-        kubectl rollout status deployment/teamtodo
+      - name: Build and Push MySQL Docker Image
+        if: steps.files_changed.outputs.mysql
+        run: |
+          docker build -t zox2m/mysql:8.0 ./sql
+          docker push zox2m/mysql:8.0
+          kubectl rollout restart deployment/mysql-deployment -n ttd
 
-    - name: Get Minikube IP
-      run: |
-        minikube ip
+      - name: Install Minikube dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y conntrack
+
+      - name: Install crictl
+        run: |
+          sudo curl -Lo /usr/local/bin/crictl https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.22.0/crictl-v1.22.0-linux-amd64.tar.gz
+          sudo chmod +x /usr/local/bin/crictl
+
+      - name: Install kubectl
+        run: |
+          curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
+
+      - name: Start Minikube with Docker runtime
+        run: |
+          sudo curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+          sudo chmod +x minikube
+          sudo mv minikube /usr/local/bin/
+          sudo minikube start --driver=none --kubernetes-version=v1.30.0 --container-runtime=docker
+          sudo minikube update-context
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+          echo "${{ secrets.MINIKUBE_CA_CERT }}" > $HOME/.kube/ca.crt
+          echo "${{ secrets.MINIKUBE_CLIENT_CERT }}" > $HOME/.kube/client.crt
+          echo "${{ secrets.MINIKUBE_CLIENT_KEY }}" > $HOME/.kube/client.key
+
+          sed -i 's|/home/ubuntu/.minikube/ca.crt|'"$HOME"'/.kube/ca.crt|g' $HOME/.kube/config
+          sed -i 's|/home/ubuntu/.minikube/profiles/minikube/client.crt|'"$HOME"'/.kube/client.crt|g' $HOME/.kube/config
+          sed -i 's|/home/ubuntu/.minikube/profiles/minikube/client.key|'"$HOME"'/.kube/client.key|g' $HOME/.kube/config

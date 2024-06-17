@@ -13,33 +13,50 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
       - name: Log in to Docker Hub
-        run: echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Determine files changed
+        id: files_changed
+        run: |
+          echo "::set-output name=nginx::$(git diff --name-only HEAD~1 HEAD | grep -E '^(nginx/|k8s/)')"
+          echo "::set-output name=php::$(git diff --name-only HEAD~1 HEAD | grep -E '^(php/|k8s/)')"
+          echo "::set-output name=mysql::$(git diff --name-only HEAD~1 HEAD | grep -E '^(sql/|k8s/)')"
 
       - name: Build and Push Nginx Docker Image
-        if: github.ref == 'refs/heads/new_main'
+        if: steps.files_changed.outputs.nginx
         run: |
           docker build -t zox2m/nginx:latest ./nginx
           docker push zox2m/nginx:latest
+          kubectl rollout restart deployment/nginx-deployment -n ttd
 
       - name: Build and Push PHP Docker Image
-        if: github.ref == 'refs/heads/new_main'
+        if: steps.files_changed.outputs.php
         run: |
           docker build -t zox2m/php:8.2 ./php
           docker push zox2m/php:8.2
+          kubectl rollout restart deployment/php-deployment -n ttd
 
       - name: Build and Push MySQL Docker Image
-        if: github.ref == 'refs/heads/new_main'
+        if: steps.files_changed.outputs.mysql
         run: |
           docker build -t zox2m/mysql:8.0 ./sql
           docker push zox2m/mysql:8.0
+          kubectl rollout restart deployment/mysql-deployment -n ttd
 
       - name: Install Minikube dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y conntrack
 
-          # Install crictl
+      - name: Install crictl
+        run: |
           sudo curl -Lo /usr/local/bin/crictl https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.22.0/crictl-v1.22.0-linux-amd64.tar.gz
           sudo chmod +x /usr/local/bin/crictl
 
@@ -68,9 +85,3 @@ jobs:
           sed -i 's|/home/ubuntu/.minikube/ca.crt|'"$HOME"'/.kube/ca.crt|g' $HOME/.kube/config
           sed -i 's|/home/ubuntu/.minikube/profiles/minikube/client.crt|'"$HOME"'/.kube/client.crt|g' $HOME/.kube/config
           sed -i 's|/home/ubuntu/.minikube/profiles/minikube/client.key|'"$HOME"'/.kube/client.key|g' $HOME/.kube/config
-
-      - name: Update Kubernetes Deployment
-        if: github.ref == 'refs/heads/new_main'
-        run: |
-          kubectl apply -f k8s/ttd-deploy.yaml -n ttd
-          kubectl rollout restart deployment/nginx-deployment -n ttd

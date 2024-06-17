@@ -1,4 +1,4 @@
-name: Deploy on Main Branch Push
+name: 메인 브랜치 푸시 시 배포하기
 
 on:
   push:
@@ -10,27 +10,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: 저장소 체크아웃
         uses: actions/checkout@v2
 
-      - name: Log in to Docker Hub
+      - name: Docker Hub에 로그인
         run: echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-      - name: Build and Push Nginx Docker Image
+      - name: kubectl 설정하기
+        env:
+          KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
+        run: |
+          echo "${{ secrets.KUBE_CONFIG }}" > ${{ github.workspace }}/kubeconfig.yaml
+
+      - name: Nginx Docker 이미지 빌드 및 푸시
         if: github.ref == 'refs/heads/new_main'
         run: |
           docker build -t zox2m/nginx:latest ./nginx
           docker push zox2m/nginx:latest
           kubectl apply -f k8s/ttd-deploy.yaml -n ttd
 
-      - name: Build and Push PHP Docker Image
+      - name: PHP Docker 이미지 빌드 및 푸시
         if: github.ref == 'refs/heads/new_main'
         run: |
           docker build -t zox2m/php:8.2 ./php
           docker push zox2m/php:8.2
           kubectl apply -f k8s/ttd-deploy.yaml -n ttd
 
-      - name: Build and Push MySQL Docker Image
+      - name: MySQL Docker 이미지 빌드 및 푸시
         if: github.ref == 'refs/heads/new_main'
         run: |
           docker build -t zox2m/mysql:8.0 ./sql
